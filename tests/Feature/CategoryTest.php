@@ -6,7 +6,7 @@ use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CategoryFeatureTest extends TestCase
+class CategoryTest extends TestCase
 {
     use RefreshDatabase;
 

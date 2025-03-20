@@ -15,10 +15,10 @@ class Category extends Model
     /**
      * Relationship: A category can have multiple cars.
      */
-    // public function cars()
-    // {
-    //     return $this->hasMany(Car::class);
-    // }
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
+    }
 
     // /**
     //  * Relationship: A category can have multiple spare parts.

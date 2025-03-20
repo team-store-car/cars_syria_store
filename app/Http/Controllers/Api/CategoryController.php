@@ -21,7 +21,7 @@ class CategoryController extends Controller
     public function index(): JsonResponse
     {
         $categories = $this->categoryService->getAllCategories();
-        return response()->json(CategoryResource::collection($categories));
+        return response()->json(['data'=>CategoryResource::collection($categories)]);
     }
 
     public function show(int $id): JsonResponse

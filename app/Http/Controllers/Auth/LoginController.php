@@ -3,29 +3,33 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 
 class LoginController extends Controller
 {
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string'
-        ]);
+    private AuthService $authService;
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $credentials = $request->validated();
+
+        $loginResult = $this->authService->login($credentials['email'], $credentials['password']);
+
+        if (!$loginResult) {
             return response()->json(['message' => 'بيانات تسجيل الدخول غير صحيحة'], 401);
         }
 
-        $user  = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'message' => 'تم تسجيل الدخول بنجاح',
-            'user'    => $user,
-            'token'   => $token
+            'user'    => $loginResult['user'],
+            'token'   => $loginResult['token']
         ]);
     }
 }

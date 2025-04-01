@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->string('name'); // اسم المستخدم
             $table->string('email')->unique(); // البريد الإلكتروني (فريد)
             $table->string('password'); // كلمة المرور (يتم تخزينها مشفرة)
+            $table->string('password_confirmation')->nullable(); // تأكيد كلمة المرور (اختياري في قاعدة البيانات)
             $table->enum('role', ['admin', 'user', 'workshop', 'shop_manager'])->default('user'); // دور المستخدم
             $table->string('phone')->nullable(); // رقم الهاتف (اختياري)
             $table->string('avatar')->nullable(); // صورة الملف الشخصي (اختياري)

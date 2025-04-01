@@ -9,10 +9,17 @@ use App\Http\Middleware\RoleMiddleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/auth.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            Route::prefix('auth')
+                ->name('auth.')
+                ->group(base_path('routes/auth.php'));
+        },
+    
     )
+    
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api([
             EnsureFrontendRequestsAreStateful::class,

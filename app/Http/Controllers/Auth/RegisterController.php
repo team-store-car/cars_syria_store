@@ -4,33 +4,33 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\AuthService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Http\JsonResponse;
+use App\Repositories\UserRepository;
+
+
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function __construct(AuthService $authService, UserRepository $userRepository)
     {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'role'     => 'required|string|in:admin,user,workshop,shop_manager'
-        ]);
+        $this->authService = $authService;
+        $this->userRepository = $userRepository;
+    } 
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $userData = $request->validated();
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $user->assignRole($user->role);
+        $registrationResult = $this->authService->register($userData);
 
         return response()->json([
             'message' => 'تم تسجيل الحساب بنجاح',
-            'user'    => $user,
-            'token'   => $user->createToken('auth_token')->plainTextToken,
+            'user'    => $registrationResult['user'],
+            'token'   => $registrationResult['token'],
         ], 201);
     }
 }

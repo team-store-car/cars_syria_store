@@ -12,8 +12,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
 use App\Repositories\UserRepository;
 
-
-
+// This controller handles the registration of new users.
 class RegisterController extends Controller
 {
     public function __construct(AuthService $authService, UserRepository $userRepository)
@@ -28,7 +27,7 @@ class RegisterController extends Controller
         $registrationResult = $this->authService->register($userData);
 
         return response()->json([
-            'message' => 'تم تسجيل الحساب بنجاح',
+            'message' => 'Account successfully registered',
             'user'    => $registrationResult['user'],
             'token'   => $registrationResult['token'],
         ], 201);

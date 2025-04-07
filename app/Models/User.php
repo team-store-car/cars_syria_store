@@ -13,4 +13,9 @@ class User extends Authenticatable
     use HasRoles , HasApiTokens, HasFactory;
 
     protected $fillable = ['name', 'email', 'password'];
+
+    public function workshop()
+    {
+        return $this->hasOne(Workshop::class, 'user_id');
+    }
 }

@@ -2,9 +2,8 @@
 
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WorkshopAdController;
 
 
-
-Route::get('/test-api', function () {
-    return response()->json(['message' => 'API is working']);
-});
+Route::post('/workshopads', [WorkshopAdController::class, 'store'])
+     ->name('store');

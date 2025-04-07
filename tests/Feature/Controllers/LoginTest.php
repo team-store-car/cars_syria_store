@@ -12,20 +12,16 @@ class LoginTest extends TestCase
 
     public function test_user_can_login_with_valid_credentials()
     {
-        // إنشاء مستخدم لاختباره
         $user = User::factory()->create([
             'email'    => 'test@example.com',
-          'password' => Hash::make('password123'),
-
+            'password' => Hash::make('password123'),
         ]);
-    
-        // إرسال طلب تسجيل الدخول
+
         $response = $this->postJson('/auth/login', [
             'email'    => 'test@example.com',
-       'password' => 'password123',
+            'password' => 'password123',
         ]);
-       
-        // التحقق من أن الاستجابة تحتوي على بيانات صحيحة
+
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
@@ -33,32 +29,30 @@ class LoginTest extends TestCase
                 'token'
             ]);
     }
-    
+
+    // Test that a user cannot log in with invalid credentials
     public function test_user_cannot_login_with_invalid_credentials()
     {
-        // إنشاء مستخدم لاختباره
         User::factory()->create([
             'email'    => 'test@example.com',
             'password' => Hash::make('password123'),
         ]);
 
-        // إرسال بيانات غير صحيحة
-        $response = $this->postJson('/auth/login', [ // استخدمنا المسار الجديد /login
+        $response = $this->postJson('/auth/login', [
             'email'    => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
 
-        // يجب أن يرجع خطأ 401
         $response->assertStatus(401)
-            ->assertJson(['message' => 'بيانات تسجيل الدخول غير صحيحة']);
+        ->assertJson(['message' => 'Invalid login credentials']);
+
     }
 
+    // Test that email and password are required for login
     public function test_login_requires_email_and_password()
     {
-        // إرسال طلب بدون بيانات
-        $response = $this->postJson('/auth/login', []); // استخدمنا المسار الجديد /login
+        $response = $this->postJson('/auth/login', []);
 
-        // يجب أن يرجع خطأ 422 بسبب فشل التحقق
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['email', 'password']);
     }

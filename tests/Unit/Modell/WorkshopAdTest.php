@@ -1,24 +1,28 @@
 <?php
-namespace Tests\Feature;
+
+namespace Tests\Unit\Modell;
 
 use App\Models\User;
 use App\Models\Workshop;
 use App\Models\WorkshopAd;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class WorkshopAdTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_can_create_a_workshop_ad()
+    #[Test]
+    public function test_can_create_a_workshop_ad()
     {
-        $user = User::factory()->create();
+        $this->seed(\Database\Seeders\RoleSeeder::class);
+        $user = User::factory()->withRole('workshop')->create();
+
         $workshop = Workshop::factory()->create(['user_id' => $user->id]);
+        
 
-        $this->actingAs($user);
-
+        $this->actingAs($user, 'sanctum');
         $data = [
             'workshop_id' => $workshop->id,
             'title'       => 'Oil Change Service',
@@ -26,7 +30,7 @@ class WorkshopAdTest extends TestCase
             'price'       => 200.00,
         ];
 
-        $response = $this->postJson(route('workshop-ads.store'), $data);
+        $response = $this->postJson('/api/workshop-ads', $data);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('workshop_ads', [

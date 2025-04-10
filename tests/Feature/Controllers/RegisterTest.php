@@ -11,11 +11,8 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test successful user registration with valid data.
-     * @test
-     */
-    public function user_can_register_with_valid_data(): void
+    #[Test]
+    public function test_user_can_register_with_valid_data(): void
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
 
@@ -39,7 +36,7 @@ class RegisterTest extends TestCase
                      ],
                      'token',
                  ])
-                 ->assertJsonFragment(['message' => 'Account registered successfully']);
+                 ->assertJsonFragment(['message' => 'Account successfully registered']);
 
         $this->assertDatabaseHas('users', [
             'email' => 'testregister@example.com',
@@ -51,11 +48,8 @@ class RegisterTest extends TestCase
         $this->assertNotEquals('password123', $user->password);
     }
 
-    /**
-     * Test registration fails if passwords do not match.
-     * @test
-     */
-    public function registration_fails_if_passwords_do_not_match(): void
+    #[Test]
+    public function test_registration_fails_if_passwords_do_not_match(): void
     {
         $userData = [
             'name'                  => 'Test User',
@@ -73,12 +67,8 @@ class RegisterTest extends TestCase
             'email' => 'testmismatch@example.com',
         ]);
     }
-
-    /**
-     * Test registration fails if email already exists.
-     * @test
-     */
-    public function registration_fails_if_email_already_exists(): void
+    #[Test]
+    public function test_registration_fails_if_email_already_exists(): void
     {
         User::factory()->create(['email' => 'existing@example.com']);
 
@@ -95,11 +85,8 @@ class RegisterTest extends TestCase
                  ->assertJsonValidationErrors('email');
     }
 
-    /**
-     * Test registration fails if required fields are missing.
-     * @test
-     */
-    public function registration_fails_if_required_fields_are_missing(): void
+    #[Test]
+    public function test_registration_fails_if_required_fields_are_missing(): void
     {
         $userData = [
             'email'                 => 'missingfields@example.com',

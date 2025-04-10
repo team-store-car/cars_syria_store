@@ -8,7 +8,9 @@ use App\Models\Workshop;
 use App\Models\WorkshopAd;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use PHPUnit\Framework\Attributes\Test;
+
 
 class WorkshopAdControllerTest extends TestCase
 {
@@ -18,6 +20,8 @@ class WorkshopAdControllerTest extends TestCase
     public function test_allows_authenticated_workshop_owners_to_create_ads()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
+
         $user = User::factory()->withRole('workshop')->create();
         $workshop = Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -43,6 +47,8 @@ class WorkshopAdControllerTest extends TestCase
     #[Test]
     public function test_prevents_users_without_workshops_from_creating_ads()
     {
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
+
         $userWithoutWorkshop = User::factory()->withRole('workshop')->create();
         $this->actingAs($userWithoutWorkshop, 'sanctum');
 
@@ -61,6 +67,8 @@ class WorkshopAdControllerTest extends TestCase
     public function test_validates_workshop_ad_data_on_create()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
+
         $user = User::factory()->withRole('workshop')->create();
         Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -76,6 +84,8 @@ class WorkshopAdControllerTest extends TestCase
     public function test_allows_workshop_owner_to_update_their_ad()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
+
         $user = User::factory()->withRole('workshop')->create();
         $workshop = Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -104,6 +114,8 @@ class WorkshopAdControllerTest extends TestCase
     public function test_prevents_updating_ad_owned_by_another_workshop()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
+
         $mainUser = User::factory()->withRole('workshop')->create();
         Workshop::factory()->create(['user_id' => $mainUser->id]);
         $this->actingAs($mainUser, 'sanctum');
@@ -131,6 +143,7 @@ class WorkshopAdControllerTest extends TestCase
     public function test_returns_not_found_when_updating_non_existent_ad()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
         $user = User::factory()->withRole('workshop')->create();
         Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -146,6 +159,7 @@ class WorkshopAdControllerTest extends TestCase
     public function test_validates_workshop_ad_data_on_update()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
         $user = User::factory()->withRole('workshop')->create();
         $workshop = Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -170,6 +184,7 @@ class WorkshopAdControllerTest extends TestCase
     public function test_allows_workshop_owner_to_delete_their_ad()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
         $user = User::factory()->withRole('workshop')->create();
         $workshop = Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');
@@ -188,6 +203,7 @@ class WorkshopAdControllerTest extends TestCase
     public function test_prevents_deleting_ad_owned_by_another_workshop()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
         $mainUser = User::factory()->withRole('workshop')->create();
         Workshop::factory()->create(['user_id' => $mainUser->id]);
         $this->actingAs($mainUser, 'sanctum');
@@ -206,6 +222,7 @@ class WorkshopAdControllerTest extends TestCase
     public function test_returns_not_found_when_deleting_non_existent_ad()
     {
         $this->seed(\Database\Seeders\RoleSeeder::class);
+        $role = Role::firstOrCreate(['name' => 'workshop', 'guard_name' => 'web']);
         $user = User::factory()->withRole('workshop')->create();
         Workshop::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user, 'sanctum');

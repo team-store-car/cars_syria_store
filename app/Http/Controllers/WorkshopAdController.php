@@ -21,40 +21,57 @@ class WorkshopAdController extends Controller
 
     public function store(StoreWorkshopAdRequest $request): JsonResponse
     {
-        // --- نقطة تسجيل 1: بداية الدالة ---
-        Log::info('WorkshopAdController@store: === Entered store method ===');
 
         $user = $request->user(); // يفضل الحصول على المستخدم مرة واحدة
 
-        // --- نقطة تسجيل 2: قبل الحصول على الورشة ---
-        Log::info('WorkshopAdController@store: Attempting to get workshop for user.', ['user_id' => $user?->id]);
 
         $workshop = $user?->workshop; // استخدم ?-> للأمان
 
-        // --- نقطة تسجيل 3: بعد الحصول على الورشة ---
-        Log::info('WorkshopAdController@store: Got workshop.', ['workshop_id' => $workshop?->id]);
 
         if (!$workshop) {
-            // --- نقطة تسجيل 4: حالة عدم وجود ورشة ---
-            Log::info('WorkshopAdController@store: User does not own a workshop. Returning 403.');
             return response()->json(['message' => 'يجب أن تكون مالك ورشة لإنشاء إعلان'], 403);
         }
 
         $validatedData = $request->validated();
 
-        // --- نقطة تسجيل 5: قبل استدعاء الـ Service ---
-        Log::info('WorkshopAdController@store: Calling WorkshopAdService->createWorkshopAd.', [
-            'workshop_id' => $workshop->id,
-            'validated_data_keys' => array_keys($validatedData) // لعرض مفاتيح البيانات فقط
-        ]);
+     
 
         $result = $this->workshopAdService->createWorkshopAd($validatedData, $workshop);
 
-        // --- نقطة تسجيل 6: بعد استدعاء الـ Service (فقط إذا وصل التنفيذ إلى هنا) ---
-        Log::info('WorkshopAdController@store: === Returned from WorkshopAdService, sending response ===', ['status_code' => $result->getStatusCode()]);
 
         return $result;
     }
+    public function update(UpdateWorkshopAdRequest $request, WorkshopAd $workshopAd): JsonResponse
+{
+    // الحصول على المستخدم الحالي
+    $user = $request->user();
 
-    // ... باقي دوال الكنترولر ...
+    // التأكد من وجود ورشة للمستخدم
+    $workshop = $user->workshop;
+    if (!$workshop) {
+        return response()->json(['message' => 'يجب أن تكون مالك ورشة لتحديث الإعلان'], 403);
+    }
+
+    // التحقق من صحة البيانات الواردة
+    $validatedData = $request->validated();
+
+    // استدعاء خدمة التحديث الموجودة بالخدمة WorkshopAdService
+    return $this->workshopAdService->updateWorkshopAd($workshopAd, $validatedData, $workshop);
+}
+
+
+public function destroy(Request $request, WorkshopAd $workshopAd): JsonResponse
+{
+    $user = $request->user();
+
+    // الحصول على الورشة الخاصة بالمستخدم للتحقق من الملكية
+    $workshop = $user->workshop;
+    if (!$workshop) {
+        return response()->json(['message' => 'يجب أن تكون مالك ورشة لحذف الإعلان'], 403);
+    }
+
+    // استدعاء خدمة الحذف الموجودة في WorkshopAdService
+    return $this->workshopAdService->deleteWorkshopAd($workshopAd, $workshop);
+}
+
 }

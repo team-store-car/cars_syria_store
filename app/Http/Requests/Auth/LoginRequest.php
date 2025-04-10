@@ -13,7 +13,7 @@ class LoginRequest extends FormRequest
      */
     public function authorize()
     {
-        return true; // عادة بتكون true لتسجيل الدخول
+        return true;
     }
 
     /**

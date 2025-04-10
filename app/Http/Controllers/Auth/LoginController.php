@@ -23,11 +23,11 @@ class LoginController extends Controller
         $loginResult = $this->authService->login($credentials['email'], $credentials['password']);
 
         if (!$loginResult) {
-            return response()->json(['message' => 'بيانات تسجيل الدخول غير صحيحة'], 401);
+            return response()->json(['message' => 'Invalid login credentials'], 401);
         }
 
         return response()->json([
-            'message' => 'تم تسجيل الدخول بنجاح',
+            'message' => 'Login successful',
             'user'    => $loginResult['user'],
             'token'   => $loginResult['token']
         ]);

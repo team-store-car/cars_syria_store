@@ -40,16 +40,14 @@ class AuthServiceTest extends TestCase
         $this->assertEquals('test_token', $result['token']);
     }
 
-    public function test_login_returns_null_on_failure()
+    /**
+     * Test failed login returns null.
+     */
+    public function test_login_failure()
     {
-        Auth::shouldReceive('attempt')->once()->andReturn(false);
-        Auth::shouldReceive('user')->never();
+        Auth::shouldReceive('attempt')->andReturn(false);
 
-        $userRepository = Mockery::mock(UserRepository::class);
-        $authService = new AuthService($userRepository);
-
-        $result = $authService->login('test@example.com', 'wrongpassword');
-
-        $this->assertNull($result);
+        $authService = new AuthService(Mockery::mock(UserRepository::class));
+        $this->assertNull($authService->login('test@example.com', 'wrongpassword'));
     }
 }

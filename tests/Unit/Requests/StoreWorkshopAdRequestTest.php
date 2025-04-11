@@ -7,8 +7,8 @@ use App\Http\Requests\StoreWorkshopAdRequest;
 
 class StoreWorkshopAdRequestTest extends TestCase
 {
-    /** @test */
-    public function it_has_correct_validation_rules()
+    #[Test]
+    public function test_it_has_correct_validation_rules()
     {
         $request = new StoreWorkshopAdRequest();
 

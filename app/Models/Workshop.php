@@ -15,6 +15,7 @@ class Workshop extends Model
         'name',
         'location',
         'description',
+        'city',
         'user_id',
         'commercial_registration_number',
         'commercial_registration_image',

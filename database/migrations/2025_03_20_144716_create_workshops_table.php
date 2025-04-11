@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('commercial_registration_number')->unique()->nullable();
             $table->string('commercial_registration_image')->nullable(); 
             $table->string('location');
+            $table->string('city')->nullable();
             $table->text('description')->nullable();
             $table->text('certification_details')->nullable();
             $table->boolean('verified')->default(false); 

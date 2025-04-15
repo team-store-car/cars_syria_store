@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\InspectionRequest;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,4 +19,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Workshop::class, 'user_id');
     }
+    public function inspectionRequest()
+    {
+    return $this->hasOne(InspectionRequest::class);
+    }
+
 }

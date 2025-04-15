@@ -4,6 +4,7 @@ use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
+use App\Http\Controllers\InspectionRequestController;
 
 
 // قم بتجميع المسارات التي تتطلب مصادقة
@@ -22,4 +23,12 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
          Route::put('/workshops/{workshop}', [WorkshopController::class, 'update']);
          Route::delete('/workshops/{workshop}', [WorkshopController::class, 'destroy']);
             });
+});
+
+
+
+Route::middleware('auth:sanctum')->group(function () { 
+    Route::post('/inspection-requests', [InspectionRequestController::class, 'store'])->name('inspection-requests.store');
+    Route::delete('/inspection-requests/{id}', [InspectionRequestController::class, 'destroy'])->name('inspection-requests.destroy');
+
 });

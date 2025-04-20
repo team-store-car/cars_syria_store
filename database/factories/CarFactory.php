@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class CarFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'user_id'=> User::factory(),
             'brand' => $this->faker->company(),
             'category_id' => Category::factory(),
             'country_of_manufacture' => $this->faker->country(),

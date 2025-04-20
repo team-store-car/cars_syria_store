@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::group([
-    'prefix'=>'cars',
+    'middleware'=>['auth:sanctum', 'role:workshop'],
 ],function(){
 });
+
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::resource('categories', CategoryController::class);
 Route::apiResource('cars', CarController::class);
 

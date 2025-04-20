@@ -11,6 +11,7 @@ class Car extends Model
 
     protected $fillable = [
         'name',
+        'user_id',
         'brand',
         'category_id',
         'model',
@@ -32,6 +33,10 @@ class Car extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
     // protected static function boot()
     // {

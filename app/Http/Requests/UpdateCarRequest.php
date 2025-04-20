@@ -23,6 +23,7 @@ class UpdateCarRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|unique:cars,name,' ,
+            'user_id'=> 'sometimes|exists:users,id',
             'brand' => 'sometimes|string|max:100',
             'category_id' => 'sometimes|exists:categories,id',
             'country_of_manufacture' => 'sometimes|string|max:100',

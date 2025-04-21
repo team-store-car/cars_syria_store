@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\InspectionRequestController;
+use App\Http\Controllers\Api\V1\CarRecommendationController;
 
 
 // قم بتجميع المسارات التي تتطلب مصادقة
@@ -32,3 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/inspection-requests/{id}', [InspectionRequestController::class, 'destroy'])->name('inspection-requests.destroy');
 
 });
+
+
+Route::post('/car-recommendations', [CarRecommendationController::class, 'getRecommendations'])
+->name('api.v1.car-recommendations.get');

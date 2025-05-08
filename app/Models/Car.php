@@ -11,6 +11,7 @@ class Car extends Model
 
     protected $fillable = [
         'name',
+        'user_id',
         'brand',
         'category_id',
         'model',
@@ -34,4 +35,23 @@ class Car extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::creating(function ($car) {
+    //         $car->slug = Str::slug($car->name) . '-' . Str::random(6);
+    //     });
+
+    //     static::updating(function ($car) {
+    //         if ($car->isDirty('name')) {
+    //             $car->slug = Str::slug($car->name) . '-' . Str::random(6);
+    //         }
+    //     });
+    // }
 }
+

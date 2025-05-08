@@ -1,11 +1,26 @@
 <?php
 
-use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\Api\CarController;
+use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
+
 use App\Http\Controllers\InspectionRequestController;
-use App\Http\Controllers\Api\V1\CarRecommendationController;
+use App\Http\Controllers\CarRecommendationController;
+
+use App\Http\Middleware\RoleMiddleware;
+
+Route::group([
+    'middleware'=>['auth:sanctum', 'role:workshop'],
+],function(){
+});
+
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::resource('categories', CategoryController::class);
+Route::apiResource('cars', CarController::class);
+
+
 
 
 // قم بتجميع المسارات التي تتطلب مصادقة
@@ -14,9 +29,9 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
      Route::put('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'update'])->name('workshop-ads.update');
      Route::delete('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'destroy'])->name('workshop-ads.destroy');
  });
- 
+
  Route::middleware('auth:sanctum')->group(function () {
-    
+
     Route::post('/workshops', [WorkshopController::class, 'store']);
 
 
@@ -25,6 +40,7 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
          Route::delete('/workshops/{workshop}', [WorkshopController::class, 'destroy']);
             });
 });
+
 
 
 
@@ -37,3 +53,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/car-recommendations', [CarRecommendationController::class, 'getRecommendations'])
 ->name('api.v1.car-recommendations.get');
+

@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Services\AI;
+namespace App\Services;
 
 use App\Interfaces\AiRecommendationInterface;
-// ازالة: use App\Interfaces\QuestionRepositoryInterface;
-// ازالة: use App\Interfaces\QuestionOptionRepositoryInterface;
-// إضافة: استخدام المودلز مباشرة
 use App\Models\Question;
 use App\Models\QuestionOption;
 use Illuminate\Http\Client\RequestException;
@@ -17,11 +14,6 @@ class DeepseekAiClient implements AiRecommendationInterface
 {
     private string $apiKey;
     private string $apiUrl;
-    // ازالة: خصائص الـ Repositories
-    // private QuestionRepositoryInterface $questionRepository;
-    // private QuestionOptionRepositoryInterface $optionRepository;
-
-    // تعديل الـ constructor لإزالة حقن الـ Repositories
     public function __construct()
     {
         $this->apiKey = config('ai.deepseek.api_key');
@@ -30,9 +22,6 @@ class DeepseekAiClient implements AiRecommendationInterface
         if (empty($this->apiKey) || empty($this->apiUrl)) {
             throw new \InvalidArgumentException('Deepseek API Key or URL is not configured.');
         }
-        // ازالة: تخزين الـ Repositories
-        // $this->questionRepository = $questionRepository;
-        // $this->optionRepository = $optionRepository;
     }
 
     /**
@@ -40,21 +29,21 @@ class DeepseekAiClient implements AiRecommendationInterface
      */
     public function getSuggestions(array $userAnswers): array
     {
-        // 1. تنسيق الإجابات باستخدام نصوص الأسئلة والخيارات الفعلية
-        $prompt = $this->formatPrompt($userAnswers); // ستستخدم هذه الدالة المودلز مباشرة الآن
+        // 1. Format the answers using the actual question and option texts
+        $prompt = $this->formatPrompt($userAnswers); // This function now directly uses the models
         if (empty($prompt)) {
             Log::warning('Could not format prompt from user answers.', ['answers' => $userAnswers]);
             return [];
         }
 
-        // ... (باقي الكود لإرسال الطلب وتحليل الاستجابة يبقى كما هو) ...
+        // ... (The rest of the code for sending the request and parsing the response remains the same) ...
         Log::debug('Sending prompt to Deepseek for car list', ['prompt' => $prompt]);
         $response = Http::withToken($this->apiKey)
                       ->timeout(30)
                       ->post($this->apiUrl, [
                           'model' => config('ai.deepseek.model', 'deepseek-chat'),
                            'messages' => [
-                               ['role' => 'system', 'content' => 'You are a helpful assistant. Based on user preferences, suggest a list of specific car models (e.g., "Toyota Camry 2023", "Honda CR-V"). Provide only the list, perhaps one car per line or as a JSON list.'],
+                               ['role' => 'system', 'content' => 'Suggest suitable cars based on these user-selected data. Remember, I want concise answers only.'],
                                ['role' => 'user', 'content' => $prompt]
                            ],
                       ]);
@@ -76,8 +65,8 @@ class DeepseekAiClient implements AiRecommendationInterface
     }
 
     /**
-     * تنسيق الإجابات في شكل نص (prompt) لـ API باستخدام نصوص الأسئلة والخيارات.
-     * **تستخدم الآن Eloquent Models مباشرة.**
+     * Format the answers into a text (prompt) for the API using the question and option texts.
+     * **Now directly uses Eloquent Models.**
      */
     private function formatPrompt(array $userAnswers): string
     {
@@ -85,8 +74,8 @@ class DeepseekAiClient implements AiRecommendationInterface
         $questionIds = array_column($userAnswers, 'question_id');
         $optionIds = array_column($userAnswers, 'chosen_option_id');
 
-        // جلب نصوص الأسئلة والخيارات دفعة واحدة باستخدام المودلز
-        // استخدام ->get()->keyBy('id') فعال لجلب البيانات مرة واحدة وتنظيمها للوصول السريع
+        // Fetch question and option texts in bulk using models
+        // Using ->get()->keyBy('id') is efficient for fetching and organizing data for quick access
         $questions = Question::whereIn('id', $questionIds)->get()->keyBy('id');
         $options = QuestionOption::whereIn('id', $optionIds)->get()->keyBy('id');
 
@@ -95,8 +84,8 @@ class DeepseekAiClient implements AiRecommendationInterface
             $questionId = $answer['question_id'];
             $optionId = $answer['chosen_option_id'];
 
-            $questionText = $questions->get($questionId)?->text; // افترض أن الحقل هو 'text'
-            $optionText = $options->get($optionId)?->text; // افترض أن الحقل هو 'text'
+            $questionText = $questions->get($questionId)?->text; // Assume the field is 'text'
+            $optionText = $options->get($optionId)?->text; // Assume the field is 'text'
 
             if ($questionText && $optionText) {
                 $promptLines[] = "- " . $questionText . ": " . $optionText;
@@ -115,12 +104,12 @@ class DeepseekAiClient implements AiRecommendationInterface
     }
 
     /**
-     * تحليل استجابة الـ AI لاستخراج قائمة السيارات.
-     * (نفس الكود السابق)
+     * Parse the AI response to extract the car list.
+     * (Same as the previous code)
      */
     private function parseAiResponseForCarList(?string $responseText): array
     {
-        // ... (نفس الكود السابق لتحليل الاستجابة) ...
+        // ... (Same as the previous code for parsing the response) ...
         if (empty($responseText)) { return []; }
         $cars = explode("\n", trim($responseText));
         $cars = array_map('trim', $cars);

@@ -19,7 +19,22 @@ class GetCarRecommendationRequest extends FormRequest
         return [
             'answers' => 'required|array|min:1',
             'answers.*.question_id' => 'required|integer|exists:questions,id',
-            'answers.*.answer_value' => 'required' // ← تأكد من وجود هذه القاعدة
+    'answers.*.chosen_option_id' => 'required|integer|exists:question_options,id',
+
+            // --- استخدم هذا الكود ---
+            'answers.*.answer_value' => [
+                // لضمان وجود القيمة
+                function ($attribute, $value, $fail) {
+                    // is_scalar تتحقق إذا كانت القيمة string, integer, float, أو boolean
+                    if (!is_scalar($value)) {
+                        // يمكنك تخصيص رسالة الخطأ هنا
+                        $fail("قيمة الإجابة المدخلة غير صالحة. يجب أن تكون نصاً أو رقماً أو قيمة منطقية.");
+                        // أو بالإنجليزية:
+                        // $fail('The :attribute must be a string, integer, float, or boolean.');
+                    }
+                },
+            ],
+            // --- نهاية الكود ---
         ];
     }
     

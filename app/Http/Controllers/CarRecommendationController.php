@@ -3,27 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GetCarRecommendationRequest; // تأكد من المسار
+use App\Http\Requests\GetCarRecommendationRequest;
 use App\Services\CarRecommendationService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Log\Logger; // لاستخدام اللوج للتبع أو الأخطاء
-use Throwable; // للتعامل مع الأخطاء العامة
+use Illuminate\Log\Logger;
+use Throwable;
 
 class CarRecommendationController extends Controller
 {
     public function __construct(
         private readonly CarRecommendationService $recommendationService,
-        private readonly Logger $logger // حقن Logger لتسجيل الأخطاء
+        private readonly Logger $logger
         ) {}
 
-    /**
-     * الحصول على توصيات سيارات بناءً على إجابات المستخدم.
-     */
+  
     public function getRecommendations(GetCarRecommendationRequest $request): JsonResponse
     {
         try {
-            // استخراج البيانات المتحقق منها من الـ Form Request
-            $validatedAnswers = $request->validated()['answers']; // نفترض أن الإجابات تأتي تحت مفتاح 'answers'
+            // Extract the validated data from the Form Request
+            $validatedAnswers = $request->validated()['answers']; 
 
             $recommendations = $this->recommendationService->generateRecommendations($validatedAnswers);
 
@@ -33,18 +31,18 @@ class CarRecommendationController extends Controller
             ]);
 
         } catch (Throwable $e) {
-            // تسجيل الخطأ للمساعدة في التصحيح
+            // Log the error to assist in debugging
             $this->logger->error('Car recommendation generation failed.', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(), // كن حذراً عند تسجيل التتبع الكامل في بيئة الإنتاج
-                'request_data' => $request->validated() // لا تسجل بيانات حساسة
+                'trace' => $e->getTraceAsString(), // Be cautious when logging full trace in production
+                'request_data' => $request->validated() // Do not log sensitive data
             ]);
 
-            // إرجاع استجابة خطأ عامة للمستخدم
+            // Return a generic error response to the user
             return response()->json([
                 'message' => 'Failed to generate car recommendations. Please try again later.',
-                // 'error' => $e->getMessage() // اختياري: إظهار الخطأ في بيئة التطوير فقط
-            ], 500); // Internal Server Error
+   
+            ], 500);
         }
     }
 }

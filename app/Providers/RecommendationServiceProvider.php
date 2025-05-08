@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Interfaces\AiRecommendationInterface;
-
-use App\Services\AI\DeepseekAiClient;
+use App\Services\DeepseekAiClient; 
 use Illuminate\Support\ServiceProvider;
+// ازالة: use App\Services\CarRecommendationService;
 
 class RecommendationServiceProvider extends ServiceProvider
 {
@@ -14,8 +14,10 @@ class RecommendationServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // ربط الواجهة الخاصة بخدمة الـ AI بالتطبيق الملموس (Deepseek client)
-        $this->app->bind(AiRecommendationInterface::class, DeepseekAiClient::class);
+        $this->app->bind(
+            AiRecommendationInterface::class,
+            DeepseekAiClient::class 
+        );
 
     }
 

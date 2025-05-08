@@ -22,4 +22,6 @@ class CategoryFactory extends Factory
             'category_type' => $this->faker->randomElement(['car', 'spare_part', 'workshop']),
         ];
     }
+
 }
+

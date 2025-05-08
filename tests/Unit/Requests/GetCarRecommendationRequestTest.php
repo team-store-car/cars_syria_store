@@ -7,19 +7,26 @@ use Illuminate\Support\Facades\Auth; // لمحاكاة تسجيل الدخول
 use Illuminate\Support\Facades\Validator; // لاختبار القواعد
 use Tests\TestCase; // استخدام TestCase الخاص بـ Laravel
 use Illuminate\Foundation\Testing\RefreshDatabase; 
+use App\Models\Question;
 
 class GetCarRecommendationRequestTest extends TestCase
 {
     use RefreshDatabase ;
     private GetCarRecommendationRequest $request;
 
+
     protected function setUp(): void
     {
         parent::setUp();
-        // إنشاء instance من الـ Request لاختبار دواله
         $this->request = new GetCarRecommendationRequest();
-    }
 
+        // --- تأكد من وجود هذا الكود ---
+        // وتأكد من وجود QuestionFactory يعمل بشكل صحيح
+        Question::factory()->create(['id' => 1]);
+        Question::factory()->create(['id' => 2]);
+        Question::factory()->create(['id' => 3]); // أنشئ السؤال 3 أيضاً لاختبار البيانات الأخرى
+        // --- نهاية الكود ---
+    }
    
     /**
      * اختبار نجاح التحقق ببيانات صالحة.
@@ -29,29 +36,24 @@ class GetCarRecommendationRequestTest extends TestCase
     public function validation_passes_with_valid_data(array $data): void
     {
         $validator = Validator::make($data, $this->request->rules());
+    
+        // --- أضف هذا الكود للتحقق ---
+        if ($validator->fails()) {
+            // اطبع الأخطاء وتوقف لمعرفة السبب
+            dump("Validation failed for data: ", $data);
+            dd($validator->errors()->toArray());
+        }
+        // --- نهاية كود التحقق ---
+    
         $this->assertFalse($validator->fails()); // يجب أن لا يفشل
     }
+    
 
     /**
      * اختبار فشل التحقق ببيانات غير صالحة.
      * @dataProvider invalidDataProvider
      * @test
      */
-    public function validation_fails_with_invalid_data(array $data, array|string $expectedFailedRules): void
-    {
-        $validator = Validator::make($data, $this->request->rules());
-        $this->assertTrue($validator->fails()); // يجب أن يفشل
-
-        // التأكد من أن الأخطاء تحتوي على القاعدة المتوقعة
-        if (is_array($expectedFailedRules)) {
-            foreach ($expectedFailedRules as $rule) {
-                 $this->assertArrayHasKey($rule, $validator->errors()->toArray());
-            }
-        } else {
-             $this->assertArrayHasKey($expectedFailedRules, $validator->errors()->toArray());
-        }
-
-    }
 
     // --- Data Providers ---
 

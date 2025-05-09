@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterCarRequest;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use App\Http\Resources\CarResource;
@@ -24,9 +25,10 @@ class CarController extends Controller
         $this->carService = $carService;
     }
 
-    public function index(): JsonResponse
+    public function index(FilterCarRequest $request): JsonResponse
     {
-        $cars = $this->carService->getAllCars();
+        $filters = $request->validated();
+        $cars = $this->carService->getAllCars($filters);
         return response()->json(CarResource::collection($cars), 200);
     }
 

@@ -2,14 +2,17 @@
 
 namespace App\Repositories;
 
+use App\Filters\CarFilter;
 use App\Models\Car;
 use Illuminate\Database\Eloquent\Collection;
 
 class CarRepository
 {
-    public function all(): Collection
+    public function all(array $filters = []): Collection
     {
-        return Car::all();
+        $query = Car::query();
+        $filter = new CarFilter($query, $filters);
+        return $filter->apply()->get();
     }
 
     public function findById(int $id): ?Car

@@ -15,9 +15,9 @@ class CarService
         $this->carRepository = $carRepository;
     }
 
-    public function getAllCars()
+    public function getAllCars(array $filters = [])
     {
-        return $this->carRepository->all();
+        return $this->carRepository->all($filters);
     }
 
     public function getCarById(int $id)

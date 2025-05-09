@@ -32,14 +32,14 @@ class FilterCarRequest extends FormRequest
             'mileage' => 'nullable|array',
             'mileage.min' => 'nullable|integer|min:0',
             'mileage.max' => 'nullable|integer|min:0',
-            'fuel_type' => 'nullable|in:petrol,diesel,electric,hybrid',
+            'fuel_type' => 'nullable',
             'transmission' => 'nullable|in:manual,automatic',
             'horsepower' => 'nullable|array',
             'horsepower.min' => 'nullable|integer|min:0',
             'horsepower.max' => 'nullable|integer|min:0',
             'seats' => 'nullable|integer|min:1',
             'color' => 'nullable|string|max:255',
-            'is_featured' => 'nullable|boolean',
+            'is_featured' => 'nullable',
             'user_id' => 'nullable|exists:users,id',
         ];
     }

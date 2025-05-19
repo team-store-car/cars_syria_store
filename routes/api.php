@@ -11,15 +11,27 @@ use App\Http\Controllers\CarRecommendationController;
 
 use App\Http\Middleware\RoleMiddleware;
 
-Route::group([
-    'middleware'=>['auth:sanctum', 'role:workshop'],
-],function(){
-});
 
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
-Route::resource('categories', CategoryController::class);
-Route::apiResource('cars', CarController::class);
+Route::apiResource('cars', CarController::class)->only(['index', 'show']);
 
+
+Route::group([
+    'middleware'=>['auth:sanctum'],
+],function(){
+    Route::apiResource('cars', CarController::class)->except(['index','show']);
+});
+
+// Route::middleware('auth:sanctum')->group(function () {
+
+// });
+// Route::post('cars',[CarController::class,'store'])->name('cars.store');
+
+Route::group([
+    'middleware'=>['auth:sanctum','role:admin'],
+],function(){
+    Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+});
 
 
 
@@ -44,7 +56,7 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
 
 
 
-Route::middleware('auth:sanctum')->group(function () { 
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inspection-requests', [InspectionRequestController::class, 'store'])->name('inspection-requests.store');
     Route::delete('/inspection-requests/{id}', [InspectionRequestController::class, 'destroy'])->name('inspection-requests.destroy');
 

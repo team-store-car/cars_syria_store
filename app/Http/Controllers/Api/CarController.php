@@ -11,6 +11,7 @@ use App\Services\CarService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
@@ -34,6 +35,8 @@ class CarController extends Controller
 
     public function store(StoreCarRequest $request): JsonResponse
     {
+        return response()->json($request->header());
+
         $car = $this->carService->createCar($request->validated());
         return response()->json(new CarResource($car), 201);
     }
@@ -44,11 +47,9 @@ class CarController extends Controller
         return response()->json(new CarResource($car), 200);
     }
 
-    public function update(UpdateCarRequest $request, Car $car)
+    public function update(UpdateCarRequest $request, Car $car): JsonResponse
     {
-
-        return  $request->all();
-        $updatedCar = $this->carService->updateCar($car, $request->validate());
+        $updatedCar = $this->carService->updateCar($car, $request->validated());
         return response()->json(new CarResource($updatedCar), 200);
     }
 

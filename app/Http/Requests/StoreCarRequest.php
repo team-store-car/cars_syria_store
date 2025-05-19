@@ -23,7 +23,7 @@ class StoreCarRequest extends FormRequest
     {
         return [
             'name' => 'required|string|unique:cars,name|max:255',
-            'user_id'=>'required|exists:users,id',
+            'user_id'=>'nullable|exists:users,id',
             'brand' => 'required|string|max:100',
             'category_id' => 'required|exists:categories,id',
             'country_of_manufacture' => 'required|string|max:100',

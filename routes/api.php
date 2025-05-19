@@ -21,6 +21,11 @@ Route::group([
 ],function(){
     Route::apiResource('cars', CarController::class)->except(['index','show']);
 });
+Route::group([
+    'middleware'=>['auth:sanctum','role:admin'],
+],function(){
+    Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+});
 
 // Route::middleware('auth:sanctum')->group(function () {
 

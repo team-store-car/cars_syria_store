@@ -13,6 +13,9 @@ class UserRepository
             'name'     => $userData['name'],
             'email'    => $userData['email'],
             'password' => Hash::make($userData['password']),
+            'role' => $userData['role'],
+            'phone' => $userData['phone']??'',
+            'avatar' => $userData['avatar']??'',
         ]);
     }
 

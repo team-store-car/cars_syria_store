@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterCarRequest;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use App\Http\Resources\CarResource;
@@ -10,6 +11,7 @@ use App\Services\CarService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
@@ -24,14 +26,17 @@ class CarController extends Controller
         $this->carService = $carService;
     }
 
-    public function index(): JsonResponse
+    public function index(FilterCarRequest $request): JsonResponse
     {
-        $cars = $this->carService->getAllCars();
+        $filters = $request->validated();
+        $cars = $this->carService->getAllCars($filters);
         return response()->json(CarResource::collection($cars), 200);
     }
 
     public function store(StoreCarRequest $request): JsonResponse
     {
+        return response()->json($request->header());
+
         $car = $this->carService->createCar($request->validated());
         return response()->json(new CarResource($car), 201);
     }
@@ -42,11 +47,9 @@ class CarController extends Controller
         return response()->json(new CarResource($car), 200);
     }
 
-    public function update(UpdateCarRequest $request, Car $car)
+    public function update(UpdateCarRequest $request, Car $car): JsonResponse
     {
-
-        return  $request->all();
-        $updatedCar = $this->carService->updateCar($car, $request->validate());
+        $updatedCar = $this->carService->updateCar($car, $request->validated());
         return response()->json(new CarResource($updatedCar), 200);
     }
 

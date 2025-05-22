@@ -58,5 +58,13 @@ class CarController extends Controller
         $this->carService->deleteCar($id);
         return response()->json(['message' => 'Car deleted successfully'], 200);
     }
+
+
+    public function searchAndFilterCars(array $validatedData): LengthAwarePaginator
+    {
+
+
+
+    }
 }
 

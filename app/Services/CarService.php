@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Auth;
 class CarService
 {
     protected CarRepository $carRepository;
+    protected ImageService $imageService;
 
-    public function __construct(CarRepository $carRepository)
+    public function __construct(CarRepository $carRepository, ImageService $imageService)
     {
         $this->carRepository = $carRepository;
+        $this->imageService = $imageService;
     }
 
     public function getAllCars(array $filters = [])
@@ -44,13 +46,35 @@ class CarService
         }
 
         $data['user_id'] = $user->id;
-        return $this->carRepository->create($data);
+        $car = $this->carRepository->create($data);
+
+        if (isset($data['images']) && is_array($data['images'])) {
+            foreach ($data['images'] as $index => $image) {
+                $this->imageService->addImageToCar($car, [
+                    'alt_text' => $data['alt_texts'][$index] ?? null,
+                    'is_primary' => $index === 0, // Set first image as primary
+                ], $image);
+            }
+        }
+
+        return $car;
     }
 
     public function updateCar(Car $car, array $data)
     {
         $this->authorizeCarAction($car);
-        return $this->carRepository->update($car, $data);
+        $updatedCar = $this->carRepository->update($car, $data);
+
+        if (isset($data['images']) && is_array($data['images'])) {
+            foreach ($data['images'] as $index => $image) {
+                $this->imageService->addImageToCar($updatedCar, [
+                    'alt_text' => $data['alt_texts'][$index] ?? null,
+                    'is_primary' => $index === 0,
+                ], $image);
+            }
+        }
+
+        return $updatedCar;
     }
 
     public function deleteCar(int $id)

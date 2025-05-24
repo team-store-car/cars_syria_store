@@ -20,17 +20,11 @@ Route::group([
     'middleware'=>['auth:sanctum'],
 ],function(){
     Route::apiResource('cars', CarController::class)->except(['index','show']);
-});
-Route::group([
-    'middleware'=>['auth:sanctum','role:admin'],
-],function(){
-    Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+    Route::post('/cars/{car}/images', [CarController::class, 'addImage'])->name('cars.addImage');
+    Route::put('/cars/images/{image}', [CarController::class, 'updateImage'])->name('cars.updateImage');
+    Route::delete('/cars/images/{image}', [CarController::class, 'deleteImage'])->name('cars.deleteImage');
 });
 
-// Route::middleware('auth:sanctum')->group(function () {
-
-// });
-// Route::post('cars',[CarController::class,'store'])->name('cars.store');
 
 Route::group([
     'middleware'=>['auth:sanctum','role:admin'],

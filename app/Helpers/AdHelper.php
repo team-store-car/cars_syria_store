@@ -7,7 +7,7 @@ class AdHelper
 {
     public static function hasReachedDailyLimit(Model $business, string $relation, int $limit = 3): bool
     {
-        return $business->$relation()->whereDate('created_at', today())->count() >= $limit;
+        return $business->$relation()->count() >= $limit;
     }
 }
 

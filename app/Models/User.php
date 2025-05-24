@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasRoles , HasApiTokens, HasFactory;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password','role','phone','avatar'];
 
     public function workshop()
     {

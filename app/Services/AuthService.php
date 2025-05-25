@@ -25,10 +25,12 @@ class AuthService
         if (isset($data['role'])) {
             $this->userRepository->assignRole($user, $data['role']);
         }
+        $token = $user->createToken('auth_token')->plainTextToken;
+        \Log::info("Generated token: " . $token);
 
         return [
             'user' => $user,
-            'token' => $user->createToken('auth_token')->plainTextToken
+            'token' => $token
         ];
     }
 

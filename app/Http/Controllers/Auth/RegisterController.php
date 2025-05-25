@@ -23,13 +23,23 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $userData = $request->validated();
+        \Log::info('Starting registration process with data:', ['email' => $userData['email']]);
 
         $registrationResult = $this->authService->register($userData);
+        
+        \Log::info('Registration completed', [
+            'user_id' => $registrationResult['user']->id,
+            'token_length' => strlen($registrationResult['token'])
+        ]);
 
         return response()->json([
+            'status' => 'success',
             'message' => 'Account successfully registered',
-            'user'    => $registrationResult['user'],
-            'token'   => $registrationResult['token'],
+            'data' => [
+                'user' => $registrationResult['user'],
+                'token' => $registrationResult['token'],
+                'token_type' => 'Bearer'
+            ]
         ], 201);
     }
 }

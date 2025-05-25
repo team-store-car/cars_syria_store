@@ -39,7 +39,6 @@ class CarController extends Controller
 
     public function store(StoreCarRequest $request): JsonResponse
     {
-        return response()->json($request->header());
 
         $car = $this->carService->createCar($request->validated());
         return response()->json(new CarResource($car), 201);

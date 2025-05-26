@@ -39,6 +39,10 @@ class UpdateCarRequest extends FormRequest
             'description' => 'nullable|string',
             'is_featured' => 'sometimes|boolean',
             'other_benefits' => 'nullable|string',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'alt_texts' => 'sometimes|array',
+            'alt_texts.*' => 'nullable|string|max:255',
         ];
     }
 }

@@ -26,7 +26,7 @@ class StoreInspectionRequestRequest extends FormRequest
                    $query->whereNotNull('id'); // تحقق بسيط من الوجود أولاً
                 }),
             ],
-            'preferred_datetime' => ['required', 'date', 'after:now'], // يجب أن يكون تاريخًا مستقبليًا
+            'preferred_datetime' => ['required', 'date', 'after:now'], 
             'notes' => ['nullable', 'string', 'max:1000'],
             // أضف أي حقول أخرى تحتاج للتحقق منها
         ];

@@ -7,6 +7,7 @@ use App\Http\Requests\FilterCarRequest;
 use App\Http\Requests\ImageRequest;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
+use App\Http\Resources\CarCollection;
 use App\Http\Resources\CarResource;
 use App\Services\CarService;
 use Illuminate\Http\JsonResponse;
@@ -33,8 +34,9 @@ class CarController extends Controller
     public function index(FilterCarRequest $request): JsonResponse
     {
         $filters = $request->validated();
-        $cars = $this->carService->getAllCars($filters);
-        return response()->json(CarResource::collection($cars), 200);
+        $perPage = $request->query('per_page', 10);
+        $cars = $this->carService->getAllCars($filters, $perPage);
+        return response()->json(new CarCollection($cars), 200);
     }
 
     public function store(StoreCarRequest $request): JsonResponse
@@ -82,11 +84,11 @@ class CarController extends Controller
     }
 
 
-    public function searchAndFilterCars(array $validatedData): LengthAwarePaginator
-    {
+    // public function searchAndFilterCars(array $validatedData): LengthAwarePaginator
+    // {
 
 
 
-    }
+    // }
 }
 

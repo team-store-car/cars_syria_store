@@ -6,6 +6,7 @@ use App\Helpers\CarPermissionHelper;
 use App\Models\Car;
 use App\Repositories\CarRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class CarService
@@ -19,9 +20,9 @@ class CarService
         $this->imageService = $imageService;
     }
 
-    public function getAllCars(array $filters = [])
+    public function getAllCars(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        return $this->carRepository->all($filters);
+        return $this->carRepository->all($filters, $perPage);
     }
 
     public function getCarById(int $id)

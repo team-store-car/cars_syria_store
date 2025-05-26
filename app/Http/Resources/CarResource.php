@@ -33,6 +33,14 @@ class CarResource extends JsonResource
         'description' => $this->description,
         'is_featured' => (bool) $this->is_featured,
         'other_benefits' => $this->other_benefits,
+        'images' => $this->images->map(function ($image) {
+                return [
+                    'id' => $image->id,
+                    'url' => asset('storage/' . $image->path),
+                    'alt_text' => $image->alt_text,
+                    'is_primary' => $image->is_primary,
+                ];
+            }),
         ];
     }
 }

@@ -5,14 +5,15 @@ namespace App\Repositories;
 use App\Filters\CarFilter;
 use App\Models\Car;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CarRepository
 {
-    public function all(array $filters = []): Collection
+    public function all(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         $query = Car::query();
         $filter = new CarFilter($query, $filters);
-        return $filter->apply()->get();
+        return $filter->apply()->paginate($perPage);;
     }
 
     public function findById(int $id): ?Car

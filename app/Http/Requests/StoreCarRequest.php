@@ -39,6 +39,10 @@ class StoreCarRequest extends FormRequest
             'description' => 'nullable|string',
             'is_featured' => 'boolean',
             'other_benefits' => 'nullable|string',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Max 2MB per image
+            'alt_texts' => 'sometimes|array',
+            'alt_texts.*' => 'nullable|string|max:255',
         ];
     }
 }

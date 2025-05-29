@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\FileStorageInterface;
-use App\Services\FileStorageService;
+use App\Repositories\ImageRepository;
+use App\Services\ImageService;
+use App\Models\Sanctum\PersonalAccessToken;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(FileStorageInterface::class, FileStorageService::class);
+        $this->app->singleton(ImageService::class, function ($app) {
+            return new ImageService($app->make(ImageRepository::class));
+        });
     }
 
     /**
@@ -21,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
 }

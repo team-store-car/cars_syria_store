@@ -44,6 +44,11 @@ class Car extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function offer()
+    {
+    return $this->hasOne(CarOffer::class);
+    }
     // protected static function boot()
     // {
     //     parent::boot();

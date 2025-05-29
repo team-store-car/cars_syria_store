@@ -11,8 +11,8 @@ class CarOfferRepository
     {
         $query = CarOffer::query()->with('car');
 
-        if (isset($filters['listing_type'])) {
-            $query->where('listing_type', $filters['listing_type']);
+        if (isset($filters['offer_type'])) {
+            $query->where('offer_type', $filters['offer_type']);
         }
 
         if (isset($filters['price_min'])) {

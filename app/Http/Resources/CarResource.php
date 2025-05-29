@@ -41,6 +41,10 @@ class CarResource extends JsonResource
                     'is_primary' => $image->is_primary,
                 ];
             }),
+        'offer' => $this->when(
+                !$request->routeIs('car-offers.*'),
+                fn() => $this->offer ? new CarOfferResource($this->offer) : null
+            ),
         ];
     }
 }

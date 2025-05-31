@@ -20,9 +20,9 @@ class AuthService
         $user = $this->userRepository->createUser($data);
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // if (isset($data['role'])) {
-        //     $this->userRepository->assignRole($user, $data['role']);
-        // }
+        if (isset($data['role'])) {
+            $this->userRepository->assignRole($user, $data['role']);
+        }
 
         return [
             'user' => $user,

@@ -41,6 +41,7 @@ class FilterCarRequest extends FormRequest
             'color' => 'nullable|string|max:255',
             'is_featured' => 'nullable',
             'user_id' => 'nullable|exists:users,id',
+            'per_page' => 'sometimes|integer|min:1|max:100',
         ];
     }
 }

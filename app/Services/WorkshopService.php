@@ -14,6 +14,11 @@ class WorkshopService
         $this->workshopRepo = $workshopRepo;
     }
 
+    public function getAllWorkshops()
+    {
+        return $this->workshopRepo->all();
+    }
+
     public function createWorkshop(array $data, User $user): Workshop
     {
         $data['user_id'] = $user->id;

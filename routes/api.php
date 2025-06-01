@@ -47,10 +47,10 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
      Route::delete('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'destroy'])->name('workshop-ads.destroy');
  });
 
+     Route::get('/workshops', [WorkshopController::class, 'index']);
+
  Route::middleware('auth:sanctum')->group(function () {
-
     Route::post('/workshops', [WorkshopController::class, 'store']);
-
 
     Route::middleware('role:workshop')->group(function () {
          Route::put('/workshops/{workshop}', [WorkshopController::class, 'update']);

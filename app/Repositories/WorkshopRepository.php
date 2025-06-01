@@ -20,4 +20,9 @@ class WorkshopRepository
     {
         $workshop->delete();
     }
+
+    public function all()
+    {
+        return Workshop::all();
+    }
 }

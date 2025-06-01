@@ -107,15 +107,16 @@ class DeepseekAiClient implements AiRecommendationInterface
      * Parse the AI response to extract the car list.
      * (Same as the previous code)
      */
-    private function parseAiResponseForCarList(?string $responseText): array
-    {
-        // ... (Same as the previous code for parsing the response) ...
-        if (empty($responseText)) { return []; }
-        $cars = explode("\n", trim($responseText));
-        $cars = array_map('trim', $cars);
-        $cars = array_filter($cars, function($line) {
-            return !empty($line) && strlen($line) > 5 && !preg_match('/^[\d\-\*\.]+\s*/', $line);
-        });
-        return array_values($cars);
-    }
+private function parseAiResponseForCarList(?string $responseText): array
+{
+    if (empty($responseText)) { return []; }
+    $cars = explode("\n", trim($responseText));
+    $cars = array_map(function ($line) {
+        return trim(preg_replace('/^[\d\-\*\.\s]+/', '', $line));
+    }, $cars);
+    $cars = array_filter($cars, function($line) {
+        return !empty($line) && strlen($line) > 2;
+    });
+    return array_values($cars);
+}
 }

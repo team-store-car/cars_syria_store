@@ -22,8 +22,8 @@ class StoreCarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:cars,name|max:255',
-            'user_id'=>'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'user_id'=>'nullable|exists:users,id',
             'brand' => 'required|string|max:100',
             'category_id' => 'required|exists:categories,id',
             'country_of_manufacture' => 'required|string|max:100',
@@ -39,6 +39,10 @@ class StoreCarRequest extends FormRequest
             'description' => 'nullable|string',
             'is_featured' => 'boolean',
             'other_benefits' => 'nullable|string',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Max 2MB per image
+            'alt_texts' => 'sometimes|array',
+            'alt_texts.*' => 'nullable|string|max:255',
         ];
     }
 }

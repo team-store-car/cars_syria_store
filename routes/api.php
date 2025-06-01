@@ -1,25 +1,42 @@
 <?php
 
 use App\Http\Controllers\Api\CarController;
+use App\Http\Controllers\Api\CarOfferController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
-
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\InspectionRequestController;
 use App\Http\Controllers\CarRecommendationController;
 
 use App\Http\Middleware\RoleMiddleware;
 
-Route::group([
-    'middleware'=>['auth:sanctum', 'role:workshop'],
-],function(){
-});
 
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
-Route::resource('categories', CategoryController::class);
-Route::apiResource('cars', CarController::class);
+Route::apiResource('cars', CarController::class)->only(['index', 'show']);
+Route::get('/car-offers', [CarOfferController::class, 'index'])->name('car-offers.index');
+Route::get('/car-offers/{offer}', [CarOfferController::class, 'show'])->name('car-offers.show');
 
+
+Route::group([
+    'middleware'=>['auth:sanctum'],
+],function(){
+    Route::apiResource('cars', CarController::class)->except(['index','show']);
+    Route::post('/cars/{car}/images', [CarController::class, 'addImage'])->name('cars.addImage');
+    Route::put('/cars/images/{image}', [CarController::class, 'updateImage'])->name('cars.updateImage');
+    Route::delete('/cars/images/{image}', [CarController::class, 'deleteImage'])->name('cars.deleteImage');
+    Route::post('/cars/{car}/offers', [CarOfferController::class, 'store'])->name('car-offers.create');
+    Route::put('/car-offers/{offer}', [CarOfferController::class, 'update'])->name('car-offers.update');
+    Route::delete('/car-offers/{offer}', [CarOfferController::class, 'destroy'])->name('car-offers.delete');
+});
+
+
+Route::group([
+    'middleware'=>['auth:sanctum','role:admin'],
+],function(){
+    Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+});
 
 
 
@@ -44,7 +61,7 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
 
 
 
-Route::middleware('auth:sanctum')->group(function () { 
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inspection-requests', [InspectionRequestController::class, 'store'])->name('inspection-requests.store');
     Route::delete('/inspection-requests/{id}', [InspectionRequestController::class, 'destroy'])->name('inspection-requests.destroy');
 
@@ -54,3 +71,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/car-recommendations', [CarRecommendationController::class, 'getRecommendations'])
 ->name('api.v1.car-recommendations.get');
 
+
+
+Route::get('/questions', [QuestionController::class, 'index']);

@@ -16,11 +16,9 @@ class AuthService
 
     public function register(array $data): array
     {
-        $user = $this->userRepository->createUser([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ]);
+
+        $user = $this->userRepository->createUser($data);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         if (isset($data['role'])) {
             $this->userRepository->assignRole($user, $data['role']);

@@ -15,9 +15,6 @@ class QuestionController extends Controller
         $this->questionRepository = $questionRepository;
     }
 
-    /**
-     * إرجاع كل الأسئلة مع الخيارات على شكل JSON.
-     */
     public function index(): JsonResponse
     {
         try {

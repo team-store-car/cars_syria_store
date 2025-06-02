@@ -23,18 +23,55 @@ class NewInspectionRequestNotification extends Notification
     {
         $this->inspectionRequest = $inspectionRequest;
     }
+
     public function via($notifiable)
     {
         return ['mail', 'database'];
     }
-    
+
+    /**
+     * E-Mail-Benachrichtigung erstellen.
+     *
+     * @param mixed $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('Neue Inspektionsanfrage')
+            ->line('Sie haben eine neue Inspektionsanfrage erhalten.')
+            ->line('Anfrage Details:')
+            ->line('Datum: ' . $this->inspectionRequest->preferred_date)
+            ->line('Status: ' . $this->inspectionRequest->status)
+            ->action('Anfrage ansehen', url('/inspection-requests/' . $this->inspectionRequest->id))
+            ->line('Vielen Dank für die Nutzung unserer Anwendung!');
+    }
+
+    /**
+     * Daten für die Datenbankbenachrichtigung.
+     *
+     * @param mixed $notifiable
+     * @return array
+     */
+    public function toArray($notifiable): array
+    {
+        return [
+            'inspection_request_id' => $this->inspectionRequest->id,
+            'user_id' => $this->inspectionRequest->user_id,
+            'preferred_datetime' => $this->inspectionRequest->preferred_datetime,
+            'status' => $this->inspectionRequest->status,
+            'notes' => $this->inspectionRequest->notes,
+            'type' => 'inspection_request',
+            'message' => 'Neue Inspektionsanfrage erhalten'
+        ];
+    }
 
     /**
      * الحصول على طلب الفحص المرتبط بالإشعار.
      *
-     * @return mixed // تأكد من نوع الإرجاع
+     * @return mixed
      */
-    public function getInspectionRequest() // أو يمكنك تسميتها inspectionRequest() فقط
+    public function getInspectionRequest()
     {
         return $this->inspectionRequest;
     }

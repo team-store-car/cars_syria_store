@@ -45,6 +45,11 @@ Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
      Route::post('/workshop-ads', [WorkshopAdController::class, 'store'])->name('workshop-ads.store');
      Route::put('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'update'])->name('workshop-ads.update');
      Route::delete('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'destroy'])->name('workshop-ads.destroy');
+     
+     // Neue Routen für Bildverwaltung
+     Route::post('/workshop-ads/{workshopAd}/images', [WorkshopAdController::class, 'addImage'])->name('workshop-ads.images.store');
+     Route::put('/workshop-ads/images/{image}', [WorkshopAdController::class, 'updateImage'])->name('workshop-ads.images.update');
+     Route::delete('/workshop-ads/images/{image}', [WorkshopAdController::class, 'deleteImage'])->name('workshop-ads.images.destroy');
  });
 
      Route::get('/workshops', [WorkshopController::class, 'index']);

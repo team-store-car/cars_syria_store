@@ -9,9 +9,7 @@ class StoreInspectionRequestRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // السماح فقط للمستخدمين المسجلين بإنشاء طلب
         return auth()->check();
-        // يمكنك إضافة منطق أكثر تعقيدًا هنا (مثل التحقق من نوع المستخدم إذا لزم الأمر)
     }
 
     public function rules(): array
@@ -20,15 +18,14 @@ class StoreInspectionRequestRequest extends FormRequest
             'workshop_id' => [
                 'required',
                 'integer',
-                // التأكد من أن الورشة موجودة وربما "معتمدة" أو "نشطة"
+             
                 Rule::exists('workshops', 'id')->where(function ($query) {
-                   // $query->where('is_approved', true)->where('is_active', true); // مثال
-                   $query->whereNotNull('id'); // تحقق بسيط من الوجود أولاً
+                   $query->whereNotNull('id'); 
                 }),
             ],
             'preferred_datetime' => ['required', 'date', 'after:now'], 
             'notes' => ['nullable', 'string', 'max:1000'],
-            // أضف أي حقول أخرى تحتاج للتحقق منها
+
         ];
     }
 }

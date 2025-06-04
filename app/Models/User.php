@@ -19,6 +19,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Workshop::class, 'user_id');
     }
+    public function store()
+    {
+        return $this->hasOne(Store::class, 'user_id');
+    }
+    public function cars()
+    {
+        return $this->hasMany(Car::class, 'user_id');
+    }
     public function inspectionRequest()
     {
     return $this->hasOne(InspectionRequest::class);

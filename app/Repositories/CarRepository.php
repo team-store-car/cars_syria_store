@@ -13,7 +13,7 @@ class CarRepository
     {
         $query = Car::query();
         $filter = new CarFilter($query, $filters);
-        return $filter->apply()->paginate($perPage);;
+        return $filter->apply()->paginate($perPage);
     }
 
     public function findById(int $id): ?Car

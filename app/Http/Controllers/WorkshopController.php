@@ -17,6 +17,23 @@ class WorkshopController extends Controller
         $this->workshopService = $workshopService;
     }
 
+    public function index(): JsonResponse
+    {
+        try {
+            $workshops = $this->workshopService->getAllWorkshops();
+            
+            return response()->json([
+                'status' => true,
+                'data' => $workshops
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Fehler beim Abrufen der Workshops'
+            ], 500);
+        }
+    }
+
     public function store(StoreWorkshopRequest $request): JsonResponse
     {
         $user = $request->user();

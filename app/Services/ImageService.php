@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Car;
 use App\Models\Image;
 use App\Repositories\ImageRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,18 +18,18 @@ class ImageService
         $this->imageRepository = $imageRepository;
     }
 
-    public function addImageToCar(Car $car, array $data, $file): Image
+    public function addImageToCar(Model $model, array $data, $file): Image
     {
-        $this->authorizeImageAction($car);
-        $path = $file->store('car_images', 'public');
+        $this->authorizeImageAction($model);
+        $path = $file->store('images', 'public');
         $imageData = [
             'path' => $path,
             'alt_text' => $data['alt_text'] ?? null,
             'is_primary' => $data['is_primary'] ?? false,
         ];
-        $image = $this->imageRepository->create($imageData, $car);
+        $image = $this->imageRepository->create($imageData, $model);
         if ($image->is_primary) {
-            $this->imageRepository->setPrimaryImage($image, $car);
+            $this->imageRepository->setPrimaryImage($image, $model);
         }
         return $image;
     }
@@ -100,7 +100,11 @@ class ImageService
     {
         $this->authorizeImageAction($image->imageable);
         if ($file) {
-            $data['path'] = $file->store('car_images', 'public');
+            // Altes Bild löschen
+            if ($image->path) {
+                Storage::disk('public')->delete($image->path);
+            }
+            $data['path'] = $file->store('images', 'public');
         }
         return $this->imageRepository->update($image, $data);
     }
@@ -108,13 +112,25 @@ class ImageService
     public function deleteImage(Image $image): bool
     {
         $this->authorizeImageAction($image->imageable);
+        // Bild von der Festplatte löschen
+        if ($image->path) {
+            Storage::disk('public')->delete($image->path);
+        }
         return $this->imageRepository->delete($image);
     }
 
-    protected function authorizeImageAction($imageable): void
+    protected function authorizeImageAction($model): void
     {
-        if ($imageable->user_id !== Auth::id()) {
-            throw new AuthorizationException('غير مصرح لك بإجراء هذا الإجراء على هذه الصورة.');
+        // Für Workshop-Anzeigen
+        if (method_exists($model, 'workshop')) {
+            $workshop = $model->workshop;
+            if ($workshop && $workshop->user_id !== Auth::id()) {
+                throw new AuthorizationException('Sie sind nicht berechtigt, Bilder für diese Anzeige zu verwalten.');
+            }
+        }
+        // Für Autos
+        elseif (property_exists($model, 'user_id') && $model->user_id !== Auth::id()) {
+            throw new AuthorizationException('Sie sind nicht berechtigt, Bilder für dieses Objekt zu verwalten.');
         }
     }
 }

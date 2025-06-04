@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\CarOfferController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\StoreController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
@@ -14,9 +15,11 @@ use App\Http\Middleware\RoleMiddleware;
 
 
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
 Route::apiResource('cars', CarController::class)->only(['index', 'show']);
 Route::get('/car-offers', [CarOfferController::class, 'index'])->name('car-offers.index');
 Route::get('/car-offers/{offer}', [CarOfferController::class, 'show'])->name('car-offers.show');
+Route::get('/stores/{store}/cars', [StoreController::class, 'cars'])->name('stores.cars');
 
 
 Route::group([
@@ -29,13 +32,22 @@ Route::group([
     Route::post('/cars/{car}/offers', [CarOfferController::class, 'store'])->name('car-offers.create');
     Route::put('/car-offers/{offer}', [CarOfferController::class, 'update'])->name('car-offers.update');
     Route::delete('/car-offers/{offer}', [CarOfferController::class, 'destroy'])->name('car-offers.delete');
+    Route::apiResource('stores', StoreController::class)->except(['index','show']);
+
 });
 
 
 Route::group([
+    'middleware'=>['auth:sanctum','role:shop_manager,admin'],
+],function(){
+    Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+
+});
+Route::group([
     'middleware'=>['auth:sanctum','role:admin'],
 ],function(){
     Route::apiResource('categories', CategoryController::class)->except(['index','show']);
+
 });
 
 

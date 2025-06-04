@@ -27,7 +27,7 @@ class StoreResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'website' => $this->website,
-            'logo' => asset('storage/' . $this->logo), // عرض الصورة كرابط كامل
+            'logo' => $this->logo() ? asset('storage/' . $this->logo()->path) : null,
             'status' => $this->status,
         ];;
     }

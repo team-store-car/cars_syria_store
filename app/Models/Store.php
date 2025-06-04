@@ -25,4 +25,12 @@ class Store extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+    public function logo()
+    {
+        return $this->images()->where('is_primary', true)->first();
+    }
 }

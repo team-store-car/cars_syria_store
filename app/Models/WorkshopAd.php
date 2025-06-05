@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class WorkshopAd extends Model
 {
@@ -22,8 +23,8 @@ class WorkshopAd extends Model
         return $this->belongsTo(Workshop::class);
     }
 
-    public function images(): HasMany
+    public function images(): MorphMany
     {
-        return $this->hasMany(WorkshopAdImage::class);
+        return $this->morphMany(Image::class, 'imageable');
     }
 }

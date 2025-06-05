@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CarOfferRequest;
 use App\Http\Requests\UpdateCarOfferRequest;
+use App\Http\Resources\CarOfferCollection;
 use App\Http\Resources\CarOfferResource;
 use App\Models\Car;
 use App\Models\CarOffer;
@@ -25,7 +26,7 @@ class CarOfferController extends Controller
         $filters = $request->validated();
         $perPage = $request->query('per_page', 10);
         $offers = $this->carOfferService->getAllOffers($filters, $perPage);
-        return response()->json(CarOfferResource::collection($offers), 200);
+        return response()->json(new CarOfferCollection($offers), 200); // Use CarOfferCollection
     }
 
     public function store(CarOfferRequest $request, Car $car): JsonResponse

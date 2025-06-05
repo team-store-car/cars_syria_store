@@ -2,18 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use App\Models\InspectionRequest;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Notifications\CustomVerifyEmail;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasRoles , HasApiTokens, HasFactory;
+    use HasRoles, HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password','role','phone','avatar'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'phone', 'avatar', 'email_verified_at'];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 
     public function workshop()
     {
@@ -24,4 +31,8 @@ class User extends Authenticatable
     return $this->hasOne(InspectionRequest::class);
     }
 
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new CustomVerifyEmail);
+    }
 }

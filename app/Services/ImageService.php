@@ -96,41 +96,30 @@ class ImageService
     }
 
 
-    public function updateImage(Image $image, array $data, $file = null): Image
+    public function updateImage(Image $image, array $data): Image
     {
         $this->authorizeImageAction($image->imageable);
-        if ($file) {
-            // Altes Bild löschen
-            if ($image->path) {
-                Storage::disk('public')->delete($image->path);
-            }
-            $data['path'] = $file->store('images', 'public');
-        }
         return $this->imageRepository->update($image, $data);
     }
 
     public function deleteImage(Image $image): bool
     {
         $this->authorizeImageAction($image->imageable);
-        // Bild von der Festplatte löschen
-        if ($image->path) {
-            Storage::disk('public')->delete($image->path);
-        }
         return $this->imageRepository->delete($image);
     }
 
     protected function authorizeImageAction($model): void
     {
-        // Für Workshop-Anzeigen
+        // For workshop ads
         if (method_exists($model, 'workshop')) {
             $workshop = $model->workshop;
             if ($workshop && $workshop->user_id !== Auth::id()) {
-                throw new AuthorizationException('Sie sind nicht berechtigt, Bilder für diese Anzeige zu verwalten.');
+                throw new AuthorizationException('You are not authorized to manage images for this ad.');
             }
         }
-        // Für Autos
+        // For cars
         elseif (property_exists($model, 'user_id') && $model->user_id !== Auth::id()) {
-            throw new AuthorizationException('Sie sind nicht berechtigt, Bilder für dieses Objekt zu verwalten.');
+            throw new AuthorizationException('You are not authorized to manage images for this object');
         }
     }
 }

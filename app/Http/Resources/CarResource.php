@@ -17,21 +17,12 @@ class CarResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'owner' => ($this->user && $this->user->role == 'shop_manager' && $this->user->store)
-                ? [
-                    'store_id' => $this->user->store->id,
-                    'store_name' => $this->user->store->name,
-                    'store_email' => $this->user->store->email,
-                    'store_logo' => $this->user->store->logo() ? asset('storage/' . $this->user->store->logo()->path) : null,
-                ]
-                : ($this->user ? [
-                    'id' => $this->user->id,
-                    'name' => $this->user->name,
-                    'email' => $this->user->email,
-                    'phone' => $this->user->phone,
-                ] : null),
             'brand' => $this->brand,
             'category' => new CategoryResource($this->category),
+            'offer' => $this->when(
+                !$request->routeIs('car-offers.*'),
+                fn() => $this->offer ? new CarOfferResource($this->offer) : null
+            ),
             'country_of_manufacture' => $this->country_of_manufacture,
             'model' => $this->model,
             'year' => $this->year,
@@ -53,10 +44,20 @@ class CarResource extends JsonResource
                     'is_primary' => $image->is_primary,
                 ];
             }),
-            'offer' => $this->when(
-                !$request->routeIs('car-offers.*'),
-                fn() => $this->offer ? new CarOfferResource($this->offer) : null
-            ),
+
+            'owner' => ($this->user && $this->user->role == 'shop_manager' && $this->user->store)
+            ? [
+                'store_id' => $this->user->store->id,
+                'store_name' => $this->user->store->name,
+                'store_email' => $this->user->store->email,
+                'store_logo' => $this->user->store->logo() ? asset('storage/' . $this->user->store->logo()->path) : null,
+            ]
+            : ($this->user ? [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+                'phone' => $this->user->phone,
+            ] : null),
         ];
     }
 }

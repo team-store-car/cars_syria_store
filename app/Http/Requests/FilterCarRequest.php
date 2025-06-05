@@ -42,6 +42,16 @@ class FilterCarRequest extends FormRequest
             'is_featured' => 'nullable',
             'user_id' => 'nullable|exists:users,id',
             'per_page' => 'sometimes|integer|min:1|max:100',
+            'store_id' => 'nullable|integer|exists:stores,id',
+            'price' => 'nullable|array',
+            'price.min' => 'nullable|numeric|min:0',
+            'price.max' => 'nullable|numeric|min:0',
+            'offer_type' => 'nullable|string|in:sale,rent', // Adjust based on your offer types
+            'price_unit' => 'nullable|string|in:USD,SAR', // Adjust based on your currencies
+            'location' => 'nullable|string|max:255',
+            'pricing_period' => 'nullable|string|in:daily,weekly,monthly,yearly', // Adjust based on your periods
+            'is_available' => 'nullable|boolean',
+            'additional_features' => 'nullable|string|max:255',
         ];
     }
 }

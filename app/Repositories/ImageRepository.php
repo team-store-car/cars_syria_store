@@ -36,6 +36,7 @@ class ImageRepository
     public function setPrimaryImage(Image $image, $imageable): void
     {
         $imageable->images()->update(['is_primary' => false]);
-        $image->update(['is_primary' => true]);
+        $image = Image::find($image->id);
+        $image->update(['is_primary'=>true]);
     }
 }

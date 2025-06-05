@@ -11,9 +11,14 @@ class CarRepository
 {
     public function all(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        $query = Car::query();
+        $query = Car::query()->with([
+            'category',
+            'images',
+            'user.store',
+            'offer',
+        ]);
         $filter = new CarFilter($query, $filters);
-        return $filter->apply()->paginate($perPage);;
+        return $filter->apply()->paginate($perPage);
     }
 
     public function findById(int $id): ?Car

@@ -9,6 +9,7 @@ use App\Http\Controllers\WorkshopController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\InspectionRequestController;
 use App\Http\Controllers\CarRecommendationController;
+use App\Http\Controllers\Auth\RegisterController;
 
 use App\Http\Middleware\RoleMiddleware;
 
@@ -74,3 +75,11 @@ Route::post('/car-recommendations', [CarRecommendationController::class, 'getRec
 
 
 Route::get('/questions', [QuestionController::class, 'index']);
+
+// E-Mail-Verifikationsrouten
+Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verify'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [RegisterController::class, 'resend'])
+    ->middleware(['auth:sanctum', 'throttle:6,1'])
+    ->name('verification.send');

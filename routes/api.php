@@ -11,6 +11,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\InspectionRequestController;
 use App\Http\Controllers\CarRecommendationController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\UserController;
 
 use App\Http\Middleware\RoleMiddleware;
 
@@ -102,4 +103,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/cars', [CarController::class, 'store']);
     Route::put('/cars/{car}', [CarController::class, 'update']);
     Route::delete('/cars/{car}', [CarController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
 });

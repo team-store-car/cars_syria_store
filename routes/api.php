@@ -96,3 +96,10 @@ Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verify'])
 Route::post('/email/verification-notification', [RegisterController::class, 'resend'])
     ->middleware(['auth:sanctum', 'throttle:6,1'])
     ->name('verification.send');
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Hier kommen die Routen, die eine verifizierte E-Mail-Adresse erfordern
+    Route::post('/cars', [CarController::class, 'store']);
+    Route::put('/cars/{car}', [CarController::class, 'update']);
+    Route::delete('/cars/{car}', [CarController::class, 'destroy']);
+});

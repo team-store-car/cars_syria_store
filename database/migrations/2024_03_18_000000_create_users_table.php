@@ -1,17 +1,21 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void
+return new class extends Migration
+{
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('password_confirmation')->nullable();
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
             $table->enum('role', ['admin', 'user', 'workshop', 'shop_manager'])->default('user');
             $table->string('phone')->nullable();
             $table->string('avatar')->nullable();
@@ -20,8 +24,8 @@ return new class extends Migration {
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('users');
     }
-};
+}; 

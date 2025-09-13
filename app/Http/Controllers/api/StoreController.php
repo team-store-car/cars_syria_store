@@ -22,16 +22,17 @@ class StoreController extends Controller
         $this->storeService = $storeService;
     }
 
-    /**
-     * Display a paginated listing of stores.
+/**
+     * Display a paginated listing of stores with filters.
      *
      * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
+        $filters = $request->query(); // Assuming filters are passed as query parameters
         $perPage = $request->query('per_page', 15);
-        $stores = $this->storeService->getAllStores((int) $perPage);
+        $stores = $this->storeService->getAllStores($filters, (int) $perPage);
         return response()->json(new StoreCollection($stores), 200);
     }
 

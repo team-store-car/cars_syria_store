@@ -3,20 +3,27 @@
 //  Repository for Store Operations
 namespace App\Repositories;
 
+use App\Filters\StoreFilter;
 use App\Models\Store;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class StoreRepository
 {
      /**
-     * Get all stores with pagination.
+     * Get all stores with pagination and filters.
      *
+     * @param array $filters Filters to apply.
      * @param int $perPage Number of stores per page.
      * @return LengthAwarePaginator
      */
-    public function getAll(int $perPage = 15): LengthAwarePaginator
+    public function getAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        return Store::paginate($perPage);
+        $query = Store::query()->with([
+            'owner',
+            'images',
+        ]);
+        $filter = new StoreFilter($query, $filters);
+        return $filter->apply()->paginate($perPage);
     }
 
      /**

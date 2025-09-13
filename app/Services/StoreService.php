@@ -33,15 +33,16 @@ class StoreService
         $this->imageService = $imageService;
     }
 
-     /**
-     * Get all stores with pagination.
+/**
+     * Get all stores with pagination and filters.
      *
+     * @param array $filters Filters to apply.
      * @param int $perPage Number of stores per page.
      * @return LengthAwarePaginator
      */
-    public function getAllStores(int $perPage = 15): LengthAwarePaginator
+    public function getAllStores(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        return $this->storeRepository->getAll($perPage);
+        return $this->storeRepository->getAll($filters, $perPage);
     }
     /**
      * Get a store by its ID.
@@ -172,7 +173,7 @@ class StoreService
      * @param Store $store
      * @throws AuthorizationException
      */
-    
+
     protected function authorizeCarAction(Store $store): void
     {
 

@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
-use App\Repositories\UserRepository;
+use App\Repositories\AuthRepository;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -18,11 +18,11 @@ use Illuminate\Auth\Access\AuthorizationException;
 // This controller handles the registration of new users.
 class RegisterController extends Controller
 {
-    public function __construct(AuthService $authService, UserRepository $userRepository)
+    public function __construct(AuthService $authService, AuthRepository $userRepository)
     {
         $this->authService = $authService;
         $this->userRepository = $userRepository;
-    } 
+    }
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -30,9 +30,9 @@ class RegisterController extends Controller
         \Log::info('Starting registration process with data:', ['email' => $userData['email']]);
 
         $registrationResult = $this->authService->register($userData);
-        
+
         // Trigger verification email
-        event(new Registered($registrationResult['user']));
+        // event(new Registered($registrationResult['user']));
 
         \Log::info('Registration completed', [
             'user_id' => $registrationResult['user']->id,
@@ -50,10 +50,10 @@ class RegisterController extends Controller
         ], 201);
     }
 
-    public function verify($id, $hash) 
+    public function verify($id, $hash)
     {
         $user = User::findOrFail($id);
-        
+
         if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
             throw new AuthorizationException;
         }

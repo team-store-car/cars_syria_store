@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\CarOfferController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\StoreController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopAdController;
 use App\Http\Controllers\WorkshopController;
@@ -11,7 +12,6 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\InspectionRequestController;
 use App\Http\Controllers\CarRecommendationController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\UserController;
 
 use App\Http\Middleware\RoleMiddleware;
 
@@ -104,7 +104,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::put('/cars/{car}', [CarController::class, 'update']);
     Route::delete('/cars/{car}', [CarController::class, 'destroy']);
 });
-
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::post('/', [UserController::class, 'store']);
+    Route::get('{id}', [UserController::class, 'show']);
+    Route::put('{user}', [UserController::class, 'update']);
+    Route::delete('{id}', [UserController::class, 'destroy']);
+        Route::post('{user}/assign-role', [UserController::class, 'assignRole']);
+        Route::post('{user}/remove-role', [UserController::class, 'removeRole']);
+    });
 });

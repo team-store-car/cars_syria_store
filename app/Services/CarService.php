@@ -80,6 +80,7 @@ class CarService
 
     public function deleteCar(int $id)
     {
+
         $car = $this->getCarById($id);
         $this->authorizeCarAction($car);
         return $this->carRepository->delete($id);
@@ -87,7 +88,10 @@ class CarService
 
     protected function authorizeCarAction(Car $car): void
     {
-        if ($car->user_id !== Auth::id()) {
+
+        $user = Auth::user();
+
+        if ($car->user_id !== Auth::id() && !$user->hasRole('admin')) {
             throw new AuthorizationException('غير مصرح لك بإجراء هذا الإجراء على هذه السيارة.');
         }
     }

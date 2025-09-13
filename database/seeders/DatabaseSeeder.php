@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         // Car::factory(20)->create();
         // User::factory(20)->create();
         // Category::factory(5)->create();
-        CarOffer::factory()->count(15)->create();
+        // CarOffer::factory()->count(15)->create();
 
     }
 }

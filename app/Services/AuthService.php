@@ -1,15 +1,15 @@
 <?php
 namespace App\Services;
-use App\Repositories\UserRepository;
+use App\Repositories\AuthRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 
 class AuthService
 {
-    private UserRepository $userRepository;
+    private AuthRepository $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(AuthRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }

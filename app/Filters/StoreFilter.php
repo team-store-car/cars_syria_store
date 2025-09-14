@@ -125,7 +125,7 @@ class StoreFilter
     {
         $this->query->where('status', $value);
     }
-
+    
     /**
      * Filter by user ID (owner).
      *

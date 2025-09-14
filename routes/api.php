@@ -106,11 +106,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::get('{id}', [UserController::class, 'show']);
-    Route::put('{user}', [UserController::class, 'update']);
-    Route::delete('{id}', [UserController::class, 'destroy']);
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::get('{id}', [UserController::class, 'show']);
+        Route::put('{user}', [UserController::class, 'update']);
+        Route::delete('{id}', [UserController::class, 'destroy']);
         Route::post('{user}/assign-role', [UserController::class, 'assignRole']);
         Route::post('{user}/remove-role', [UserController::class, 'removeRole']);
     });

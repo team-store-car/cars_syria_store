@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterStoreRequest;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\StoreUpdateRequest;
 use App\Http\Resources\CarCollection;
@@ -28,11 +29,11 @@ class StoreController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(FilterStoreRequest $request): JsonResponse
     {
-        $filters = $request->query(); // Assuming filters are passed as query parameters
+        $filters = $request->validated();
         $perPage = $request->query('per_page', 15);
-        $stores = $this->storeService->getAllStores($filters, (int) $perPage);
+        $stores = $this->storeService->getAllStores($filters, $perPage);
         return response()->json(new StoreCollection($stores), 200);
     }
 

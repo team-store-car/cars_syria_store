@@ -22,6 +22,7 @@ class StoreController extends Controller
     {
         $this->storeService = $storeService;
     }
+    //test
 
 /**
      * Display a paginated listing of stores with filters.

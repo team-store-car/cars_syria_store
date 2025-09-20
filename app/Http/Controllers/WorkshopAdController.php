@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FilterWorkshopAdRequest;
 use App\Http\Requests\StoreWorkshopAdRequest;
 use App\Http\Requests\UpdateWorkshopAdRequest;
 use App\Services\WorkshopAdService;
@@ -24,6 +25,20 @@ class WorkshopAdController extends Controller
         $this->imageService = $imageService;
     }
 
+    /**
+     * Display a paginated listing of workshop ads with filters.
+     *
+     * @param FilterWorkshopAdRequest $request
+     * @return JsonResponse
+     */
+    public function index(FilterWorkshopAdRequest $request): JsonResponse
+    {
+        $filters = $request->validated();
+        $perPage = $request->query('per_page', 10);
+        $workshopAds = $this->workshopAdService->getAllWorkshopAds($filters, $perPage);
+        return response()->json($workshopAds, 200);
+    }
+
     public function store(StoreWorkshopAdRequest $request): JsonResponse
     {
 
@@ -39,7 +54,7 @@ class WorkshopAdController extends Controller
 
         $validatedData = $request->validated();
 
-     
+
 
         $result = $this->workshopAdService->createWorkshopAd($validatedData, $workshop);
 
@@ -84,14 +99,14 @@ public function addImage(WorkshopAd $workshopAd, ImageRequest $request): JsonRes
     // Überprüfen, ob der Benutzer berechtigt ist
     $user = $request->user();
     $workshop = $user->workshop;
-    
+
     if (!$workshop || $workshopAd->workshop_id !== $workshop->id) {
         return response()->json(['message' => 'Nicht berechtigt, Bilder zu dieser Anzeige hinzuzufügen'], 403);
     }
 
     $data = $request->validated();
     $image = $this->imageService->addImageToCar($workshopAd, $data, $request->file('image'));
-    
+
     return response()->json([
         'message' => 'Bild erfolgreich hinzugefügt',
         'image' => $image
@@ -103,14 +118,14 @@ public function updateImage(Image $image, ImageRequest $request): JsonResponse
     // Überprüfen, ob der Benutzer berechtigt ist
     $user = $request->user();
     $workshop = $user->workshop;
-    
+
     if (!$workshop || $image->imageable->workshop_id !== $workshop->id) {
         return response()->json(['message' => 'Nicht berechtigt, dieses Bild zu aktualisieren'], 403);
     }
 
     $data = $request->validated();
     $updatedImage = $this->imageService->updateImage($image, $data, $request->file('image'));
-    
+
     return response()->json([
         'message' => 'Bild erfolgreich aktualisiert',
         'image' => $updatedImage
@@ -122,13 +137,13 @@ public function deleteImage(Image $image, Request $request): JsonResponse
     // Überprüfen, ob der Benutzer berechtigt ist
     $user = $request->user();
     $workshop = $user->workshop;
-    
+
     if (!$workshop || $image->imageable->workshop_id !== $workshop->id) {
         return response()->json(['message' => 'Nicht berechtigt, dieses Bild zu löschen'], 403);
     }
 
     $this->imageService->deleteImage($image);
-    
+
     return response()->json(['message' => 'Bild erfolgreich gelöscht']);
 }
 

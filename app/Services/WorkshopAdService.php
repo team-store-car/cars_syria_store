@@ -7,6 +7,7 @@ use App\Models\WorkshopAd; // أضف هذا
 use App\Repositories\WorkshopAdRepository;
 use Illuminate\Http\JsonResponse;
 use App\Helpers\AdHelper; // تأكد من أن هذا المساعد موجود ومناسب
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate; // لاستخدام صلاحيات Laravel (اختياري لكن جيد)
 
 class WorkshopAdService
@@ -17,6 +18,19 @@ class WorkshopAdService
     {
         $this->workshopAdRepository = $workshopAdRepository;
     }
+
+    /**
+     * Get all workshop ads with pagination and filters.
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getAllWorkshopAds(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        return $this->workshopAdRepository->all($filters, $perPage);
+    }
+
 
     public function createWorkshopAd(array $data, Workshop $workshop): JsonResponse
     {

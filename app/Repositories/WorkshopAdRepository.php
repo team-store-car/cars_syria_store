@@ -2,11 +2,31 @@
 
 namespace App\Repositories;
 
+use App\Filters\WorkshopAdFilter;
 use App\Models\WorkshopAd;
 use Illuminate\Database\Eloquent\ModelNotFoundException; // أضف هذا
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class WorkshopAdRepository
 {
+
+        /**
+     * Get all workshop ads with pagination and filters.
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function all(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = WorkshopAd::query()->with([
+            'workshop:id,name',
+            'images',
+        ]);
+        $filter = new WorkshopAdFilter($query, $filters);
+        return $filter->apply()->paginate($perPage);
+    }
+
     public function find(int $id): ?WorkshopAd
     {
         // يمكنك استخدام findOrFail إذا كنت تفضل رمي استثناء مباشرة هنا

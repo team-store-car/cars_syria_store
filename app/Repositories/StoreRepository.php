@@ -71,9 +71,8 @@ class StoreRepository
      * @return bool
      */
 
-    public function delete($id)
+    public function delete(Store $store)
     {
-        $store = Store::findOrFail($id);
         $store->delete();
         return true;
     }

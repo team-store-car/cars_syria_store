@@ -14,6 +14,9 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $latestRole = $this->roles()
+            ->first();
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -21,6 +24,9 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'avatar' => $this->avatar,
             'roles' => $this->getRoleNames(),
+            'latest_role' => $latestRole ? $latestRole->name : null,
+            'store_id' => $this->store ? $this->store->id : null,
+            'workshop_id' => $this->workshop ? $this->workshop->id : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -1,5 +1,7 @@
 <?php
 namespace App\Services;
+
+use App\Http\Resources\UserResource;
 use App\Repositories\AuthRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +30,7 @@ class AuthService
         Log::info("Generated token: " . $token);
 
         return [
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ];
     }
@@ -43,7 +45,7 @@ class AuthService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ];
     }

@@ -14,6 +14,7 @@ use App\Repositories\AuthRepository;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Log;
 
 // This controller handles the registration of new users.
 class RegisterController extends Controller
@@ -27,14 +28,14 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $userData = $request->validated();
-        \Log::info('Starting registration process with data:', ['email' => $userData['email']]);
+        Log::info('Starting registration process with data:', ['email' => $userData['email']]);
 
         $registrationResult = $this->authService->register($userData);
 
         // Trigger verification email
         // event(new Registered($registrationResult['user']));
 
-        \Log::info('Registration completed', [
+        Log::info('Registration completed', [
             'user_id' => $registrationResult['user']->id,
             'token_length' => strlen($registrationResult['token'])
         ]);

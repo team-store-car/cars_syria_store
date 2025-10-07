@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\User;
 use App\Models\Workshop;
 use App\Repositories\WorkshopRepository;
+use Illuminate\Support\Facades\Auth;
 
 class WorkshopService
 {
@@ -22,12 +24,18 @@ class WorkshopService
     public function createWorkshop(array $data, User $user): Workshop
     {
         $data['user_id'] = $user->id;
-        return $this->workshopRepo->create($data);
+        $workshop = $this->workshopRepo->create($data);
+        if ($user->hasRole('user')) {
+            $user->removeRole('user');
+        }
+        $user->assignRole('workshop');
+
+        return $workshop;
     }
 
     public function updateWorkshop(Workshop $workshop, array $data, User $user): Workshop
     {
-        if ($workshop->user_id !== $user->id) {
+        if ($workshop->user_id !== $user->id && !(Auth::user()->hasRole('admin'))) {
             abort(403, 'غير مصرح بتعديل هذه الورشة');
         }
 
@@ -36,9 +44,14 @@ class WorkshopService
 
     public function deleteWorkshop(Workshop $workshop, User $user): void
     {
-        if ($workshop->user_id !== $user->id) {
+        if ($workshop->user_id !== $user->id  && !(Auth::user()->hasRole('admin'))) {
             abort(403, 'غير مصرح بحذف هذه الورشة');
         }
+        $owner = $workshop->user;
+                if($owner->hasRole('workshop')){
+            $owner->removeRole('workshop');
+        }
+        $owner->assignRole('user');
 
         $this->workshopRepo->delete($workshop);
     }

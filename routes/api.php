@@ -23,6 +23,19 @@ Route::get('/car-offers', [CarOfferController::class, 'index'])->name('car-offer
 Route::get('/car-offers/{offer}', [CarOfferController::class, 'show'])->name('car-offers.show');
 Route::get('/stores/{store}/cars', [StoreController::class, 'cars'])->name('stores.cars');
 Route::get('/categories/{category}/cars', [CategoryController::class, 'cars'])->name('categories.cars');
+Route::get('/workshop-ads', [WorkshopAdController::class, 'index'])->name('workshop-ads.index');
+Route::get('/workshops', [WorkshopController::class, 'index']);
+Route::post('/car-recommendations', [CarRecommendationController::class, 'getRecommendations'])
+    ->name('api.v1.car-recommendations.get');
+Route::get('/questions', [QuestionController::class, 'index']);
+// E-Mail-Verifikationsrouten
+Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verify'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [RegisterController::class, 'resend'])
+    ->middleware(['auth:sanctum', 'throttle:6,1'])
+    ->name('verification.send');
+
 
 
 Route::group([
@@ -35,74 +48,18 @@ Route::group([
     Route::post('/cars/{car}/offers', [CarOfferController::class, 'store'])->name('car-offers.create');
     Route::put('/car-offers/{offer}', [CarOfferController::class, 'update'])->name('car-offers.update');
     Route::delete('/car-offers/{offer}', [CarOfferController::class, 'destroy'])->name('car-offers.delete');
-    Route::apiResource('stores', StoreController::class)->except(['index', 'show']);
-});
+    Route::post('stores', [StoreController::class, 'store'])->name('store.store');
 
-
-Route::group([
-    'middleware' => ['auth:sanctum'],
-], function () {
-    Route::apiResource('/categories', CategoryController::class)->except(['index', 'show']);
-});
-
-
-
-Route::get('/workshop-ads', [WorkshopAdController::class, 'index'])->name('workshop-ads.index');
-
-// قم بتجميع المسارات التي تتطلب مصادقة
-Route::middleware(['auth:sanctum', 'role:workshop'])->group(function () {
-    Route::post('/workshop-ads', [WorkshopAdController::class, 'store'])->name('workshop-ads.store');
-    Route::put('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'update'])->name('workshop-ads.update');
-    Route::delete('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'destroy'])->name('workshop-ads.destroy');
-
-    // Neue Routen für Bildverwaltung
-    Route::post('/workshop-ads/{workshopAd}/images', [WorkshopAdController::class, 'addImage'])->name('workshop-ads.images.store');
-    Route::put('/workshop-ads/images/{image}', [WorkshopAdController::class, 'updateImage'])->name('workshop-ads.images.update');
-    Route::delete('/workshop-ads/images/{image}', [WorkshopAdController::class, 'deleteImage'])->name('workshop-ads.images.destroy');
-});
-
-Route::get('/workshops', [WorkshopController::class, 'index']);
-
-Route::middleware('auth:sanctum')->group(function () {
     Route::post('/workshops', [WorkshopController::class, 'store']);
-
-    Route::middleware('role:workshop')->group(function () {
-        Route::put('/workshops/{workshop}', [WorkshopController::class, 'update']);
-        Route::delete('/workshops/{workshop}', [WorkshopController::class, 'destroy']);
-    });
-});
-
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
     Route::post('/inspection-requests', [InspectionRequestController::class, 'store'])->name('inspection-requests.store');
     Route::delete('/inspection-requests/{id}', [InspectionRequestController::class, 'destroy'])->name('inspection-requests.destroy');
 });
 
 
-Route::post('/car-recommendations', [CarRecommendationController::class, 'getRecommendations'])
-    ->name('api.v1.car-recommendations.get');
-
-
-
-Route::get('/questions', [QuestionController::class, 'index']);
-
-// E-Mail-Verifikationsrouten
-Route::get('/email/verify/{id}/{hash}', [RegisterController::class, 'verify'])
-    ->name('verification.verify');
-
-Route::post('/email/verification-notification', [RegisterController::class, 'resend'])
-    ->middleware(['auth:sanctum', 'throttle:6,1'])
-    ->name('verification.send');
-
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    // Hier kommen die Routen, die eine verifizierte E-Mail-Adresse erfordern
-    Route::post('/cars', [CarController::class, 'store']);
-    Route::put('/cars/{car}', [CarController::class, 'update']);
-    Route::delete('/cars/{car}', [CarController::class, 'destroy']);
-});
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+Route::group([
+    'middleware' => ['auth:sanctum','role:admin'],
+], function () {
+    Route::apiResource('/categories', CategoryController::class)->except(['index', 'show']);
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::post('/', [UserController::class, 'store']);
@@ -113,3 +70,38 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('{user}/remove-role', [UserController::class, 'removeRole']);
     });
 });
+
+
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    // Hier kommen die Routen, die eine verifizierte E-Mail-Adresse erfordern
+    Route::post('/cars', [CarController::class, 'store']);
+    Route::put('/cars/{car}', [CarController::class, 'update']);
+    Route::delete('/cars/{car}', [CarController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:shop_manager,admin'])->group(function () {
+    Route::put('stores/{store}', [StoreController::class, 'update'])->name('update.store');
+    Route::delete('stores/{store}', [StoreController::class, 'destroy'])->name('dalete.store');
+});
+
+// قم بتجميع المسارات التي تتطلب مصادقة
+Route::middleware(['auth:sanctum', 'role:workshop,admin'])->group(function () {
+    Route::post('/workshop-ads', [WorkshopAdController::class, 'store'])->name('workshop-ads.store');
+    Route::put('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'update'])->name('workshop-ads.update');
+    Route::delete('/workshop-ads/{workshopAd}', [WorkshopAdController::class, 'destroy'])->name('workshop-ads.destroy');
+
+    // Neue Routen für Bildverwaltung
+    Route::post('/workshop-ads/{workshopAd}/images', [WorkshopAdController::class, 'addImage'])->name('workshop-ads.images.store');
+    Route::put('/workshop-ads/images/{image}', [WorkshopAdController::class, 'updateImage'])->name('workshop-ads.images.update');
+    Route::delete('/workshop-ads/images/{image}', [WorkshopAdController::class, 'deleteImage'])->name('workshop-ads.images.destroy');
+    Route::put('/workshops/{workshop}', [WorkshopController::class, 'update']);
+    Route::delete('/workshops/{workshop}', [WorkshopController::class, 'destroy']);
+});
+
+
+
+
+
+
+

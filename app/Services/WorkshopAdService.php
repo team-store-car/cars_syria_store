@@ -8,6 +8,7 @@ use App\Repositories\WorkshopAdRepository;
 use Illuminate\Http\JsonResponse;
 use App\Helpers\AdHelper; // تأكد من أن هذا المساعد موجود ومناسب
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate; // لاستخدام صلاحيات Laravel (اختياري لكن جيد)
 
 class WorkshopAdService
@@ -53,7 +54,7 @@ class WorkshopAdService
     public function updateWorkshopAd(WorkshopAd $workshopAd, array $data, Workshop $userWorkshop): JsonResponse
     {
         // التحقق من الملكية - يجب أن يكون المستخدم هو مالك الورشة صاحبة الإعلان
-        if ($workshopAd->workshop_id !== $userWorkshop->id) {
+        if ($workshopAd->workshop_id !== $userWorkshop->id && !(Auth::user()->hasRole('admin'))) {
              return response()->json(['message' => 'ليس لديك الصلاحية لتعديل هذا الإعلان'], 403);
              // أو استخدم نظام الصلاحيات في Laravel: Gate::authorize('update', $workshopAd);
         }
@@ -73,7 +74,7 @@ class WorkshopAdService
     public function deleteWorkshopAd(WorkshopAd $workshopAd, Workshop $userWorkshop): JsonResponse
     {
         // التحقق من الملكية
-        if ($workshopAd->workshop_id !== $userWorkshop->id) {
+        if ($workshopAd->workshop_id !== $userWorkshop->id && !(Auth::user()->hasRole('admin')) ) {
              return response()->json(['message' => 'ليس لديك الصلاحية لحذف هذا الإعلان'], 403);
              // أو استخدم نظام الصلاحيات في Laravel: Gate::authorize('delete', $workshopAd);
         }

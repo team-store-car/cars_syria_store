@@ -27,13 +27,13 @@ class StoreService
      * @param ImageService $imageService
      */
 
-    public function __construct(StoreRepository $storeRepository , ImageService $imageService)
+    public function __construct(StoreRepository $storeRepository, ImageService $imageService)
     {
         $this->storeRepository = $storeRepository;
         $this->imageService = $imageService;
     }
 
-/**
+    /**
      * Get all stores with pagination and filters.
      *
      * @param array $filters Filters to apply.
@@ -55,7 +55,7 @@ class StoreService
     {
         return $this->storeRepository->findById($id);
     }
-     /**
+    /**
      * Create a new store and associate a logo image if provided.
      *
      * @param array $data Store data including optional logo file and alt_text.
@@ -66,8 +66,8 @@ class StoreService
     {
 
         $user = Auth::user();
-         // Store the logo image if provided
-         $logoData = [
+        // Store the logo image if provided
+        $logoData = [
             'alt_text' => $data['alt_text'] ?? 'Store logo',
             'is_primary' => true, // Logo is typically the primary image
         ];
@@ -78,6 +78,10 @@ class StoreService
         $data['user_id'] = $user->id;
         // Create the store
         $store = $this->storeRepository->create($data);
+        // if ($user->hasRole('user')) {
+        //     $user->removeRole('user');
+        // }
+        // $user->assignRole('shop_manager');
 
         // Associate the logo image with the store
         if ($logoFile) {
@@ -92,7 +96,7 @@ class StoreService
         return $store;
     }
 
-       /**
+    /**
      * Update an existing store and its logo if provided.
      *
      * @param Store $store The store of the store to update.
@@ -100,7 +104,7 @@ class StoreService
      * @return Store The updated store instance.
      */
 
-    public function updateStore(Store $store , array $data)
+    public function updateStore(Store $store, array $data)
     {
 
         $this->authorizeCarAction($store);
@@ -132,7 +136,7 @@ class StoreService
         return $this->storeRepository->update($store, $data);
     }
 
-     /**
+    /**
      * Delete a store and its associated logo by its ID.
      *
      * @param int $id
@@ -141,16 +145,20 @@ class StoreService
 
     public function deleteStore($id)
     {
-               // Find the store
-               $store = $this->storeRepository->findById($id);
-               $this->authorizeCarAction($store);
-               // Delete the logo if it exists
-               if ($logo = $store->logo()) {
-                   $this->imageService->deleteImage($logo);
-               }
-
-               // Delete the store
-               return $this->storeRepository->delete($id);
+        // Find the store
+        $store = $this->storeRepository->findById($id);
+        $this->authorizeCarAction($store);
+        // Delete the logo if it exists
+        if ($logo = $store->logo()) {
+            $this->imageService->deleteImage($logo);
+        }
+        $owner = $store->owner;
+        if ($owner->hasRole('shop_manager')) {
+            $owner->removeRole('shop_manager');
+        }
+        $owner->assignRole('user');
+        // Delete the store
+        return $this->storeRepository->delete($store);
     }
 
 
@@ -174,11 +182,12 @@ class StoreService
      * @throws AuthorizationException
      */
 
-    protected function authorizeCarAction(Store $store): void
+    protected function authorizeCarAction(Store $store)
     {
 
-        if ($store->user_id !== Auth::id()) {
-            throw new AuthorizationException('غير مصرح لك بإجراء هذا الإجراء على هذه السيارة.');
+        // return Auth::user();
+        if ($store->user_id !== Auth::id() && !(Auth::user()->hasRole('admin'))) {
+            throw new AuthorizationException('غير مصرح لك بإجراء هذا الإجراء على هذا المتجر.');
         }
     }
 }

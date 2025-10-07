@@ -13,6 +13,7 @@ use App\Models\Store;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -62,7 +63,7 @@ class StoreController extends Controller
     public function update(StoreUpdateRequest $request,Store $store)
     {
         // return $request;
-       $this->storeService->updateStore($store, $request->validated());
+        $this->storeService->updateStore($store, $request->validated());
         return new StoreResource($store);
     }
 

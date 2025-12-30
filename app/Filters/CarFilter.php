@@ -251,7 +251,7 @@ class CarFilter
                 } elseif (isset($value['max'])) {
                     $query->where('price', '<=', $value['max']);
                 }
-            }); 
+            });
         }
     }
 
@@ -343,5 +343,21 @@ class CarFilter
                 ->from('car_offers')
                 ->where('additional_features', 'like', "%{$value}%");
         });
+    }
+
+    /**
+     * Filter by whether the car has an offer.
+     *
+     * @param string $value
+     * @return void
+     */
+    protected function has_offer($value)
+    {
+        if ($value === 'yes') {
+            $this->query->whereHas('offer');
+        } elseif ($value === 'no') {
+            $this->query->whereDoesntHave('offer');
+        }
+        // If value is anything else (or 'all'), no filter is applied
     }
 }

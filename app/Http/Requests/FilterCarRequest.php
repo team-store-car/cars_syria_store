@@ -52,6 +52,7 @@ class FilterCarRequest extends FormRequest
             'pricing_period' => 'nullable|string|in:daily,weekly,monthly,yearly', // Adjust based on your periods
             'is_available' => 'nullable|boolean',
             'additional_features' => 'nullable|string|max:255',
+            'has_offer' => 'nullable|string|in:yes,no',
         ];
     }
 }

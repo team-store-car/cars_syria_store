@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CarRepository
 {
-    public function all(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    public function all(array $filters = [], int $perPage = 50): LengthAwarePaginator
     {
         $query = Car::query()->with([
             'category',
@@ -17,8 +17,11 @@ class CarRepository
             'user.store',
             'offer',
         ]);
-        $filter = new CarFilter($query, $filters);
-        return $filter->apply()->paginate($perPage);
+        if($filters != null){
+            $query = new CarFilter($query, $filters);
+            return $query->apply()->paginate($perPage);
+        }
+        return $query->paginate($perPage);
     }
 
     public function findById(int $id): ?Car

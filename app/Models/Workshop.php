@@ -22,6 +22,7 @@ class Workshop extends Model
         'commercial_registration_image',
         'verified',
         'certification_details',
+        'owner_number',
 
     ];
 
@@ -33,7 +34,7 @@ class Workshop extends Model
         return $this->belongsTo(User::class);
     }
 
- 
+
     public function workshopAds(): HasMany // <--- تأكد من هذا السطر
     {
         return $this->hasMany(WorkshopAd::class);

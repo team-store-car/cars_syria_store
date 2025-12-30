@@ -43,6 +43,7 @@ class StoreCarRequest extends FormRequest
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Max 2MB per image
             'alt_texts' => 'sometimes|array',
             'alt_texts.*' => 'nullable|string|max:255',
+            'owner_number' => 'nullable|string|max:30',
         ];
     }
 }

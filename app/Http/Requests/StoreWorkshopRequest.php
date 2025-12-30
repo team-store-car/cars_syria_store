@@ -11,8 +11,8 @@ class StoreWorkshopRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;    
-    
+        return true;
+
     }
 
     /**
@@ -30,7 +30,8 @@ class StoreWorkshopRequest extends FormRequest
             'commercial_registration_number' => 'required|string|unique:workshops',
             'commercial_registration_image' => 'nullable|url',
             'certification_details' => 'nullable|string',
+            'owner_number' => 'nullable|string|max:20',
         ];
     }
-    
+
 }

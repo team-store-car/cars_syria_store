@@ -239,12 +239,19 @@ class CarFilter
      */
     protected function price($value)
     {
-        if (is_array($value) && isset($value['min'], $value['max'])) {
+        if (is_array($value)) {
             $this->query->whereIn('cars.id', function ($query) use ($value) {
                 $query->select('car_id')
-                      ->from('car_offers')
-                      ->whereBetween('price', [$value['min'], $value['max']]);
-            });
+                    ->from('car_offers');
+
+                if (isset($value['min']) && isset($value['max'])) {
+                    $query->whereBetween('price', [$value['min'], $value['max']]);
+                } elseif (isset($value['min'])) {
+                    $query->where('price', '>=', $value['min']);
+                } elseif (isset($value['max'])) {
+                    $query->where('price', '<=', $value['max']);
+                }
+            }); 
         }
     }
 
@@ -258,8 +265,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('offer_type', $value);
+                ->from('car_offers')
+                ->where('offer_type', $value);
         });
     }
 
@@ -273,8 +280,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('price_unit', $value);
+                ->from('car_offers')
+                ->where('price_unit', $value);
         });
     }
 
@@ -288,8 +295,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('location', 'like', "%{$value}%");
+                ->from('car_offers')
+                ->where('location', 'like', "%{$value}%");
         });
     }
 
@@ -303,8 +310,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('pricing_period', $value);
+                ->from('car_offers')
+                ->where('pricing_period', $value);
         });
     }
 
@@ -318,8 +325,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('is_available', filter_var($value, FILTER_VALIDATE_BOOLEAN));
+                ->from('car_offers')
+                ->where('is_available', filter_var($value, FILTER_VALIDATE_BOOLEAN));
         });
     }
 
@@ -333,8 +340,8 @@ class CarFilter
     {
         $this->query->whereIn('cars.id', function ($query) use ($value) {
             $query->select('car_id')
-                  ->from('car_offers')
-                  ->where('additional_features', 'like', "%{$value}%");
+                ->from('car_offers')
+                ->where('additional_features', 'like', "%{$value}%");
         });
     }
 }

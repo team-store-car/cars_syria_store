@@ -27,6 +27,7 @@ class Car extends Model
         'description',
         'is_featured',
         'other_benefits',
+        'owner_number',
 
     ];
 
